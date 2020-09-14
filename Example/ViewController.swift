@@ -51,11 +51,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         v.delegate = self
         v.dataSource = self
         v.estimatedRowHeight = UITableView.automaticDimension
-//        if #available(iOS 11.0, *) {
-//            v.contentInsetAdjustmentBehavior = .never
-//        } else {
-            // Fallback on earlier versions
-//        }
+        //        if #available(iOS 11.0, *) {
+        //            v.contentInsetAdjustmentBehavior = .never
+        //        } else {
+        // Fallback on earlier versions
+        //        }
         v.tableFooterView = UIView()
         return v
     }()
@@ -67,23 +67,23 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let v = SearchViewController(entryViewController: self)
         v.title = self.nextTitle(seq: 1)
         return v
-        }()
+    }()
     
     var cellModels : [CellModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
-//        self.automaticallyAdjustsScrollViewInsets = false
+        //        self.automaticallyAdjustsScrollViewInsets = false
         view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
-//            if #available(iOS 11.0, *) {
-//                make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
-//                make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
-//                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-//                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-//                return
-//            }
+            //            if #available(iOS 11.0, *) {
+            //                make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
+            //                make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
+            //                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            //                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            //                return
+            //            }
             make.edges.equalToSuperview()
         }
         
@@ -123,7 +123,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let v = CellModel()
             v.title = "curtain"
             v.action = {[weak self] ()->() in
-                self?.snc_navigationController?.pushViewController({[weak self]()->ViewController in
+                self?.snc_navigationController?.setViewControllers([{[weak self] ()->ViewController in
                     let v = ViewController()
                     v.title = self?.nextTitle(seq: 1)
                     v.snc_transition = {()->SNCCurtainTransition in
@@ -131,7 +131,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                         return v
                     }()
                     return v
-                    }(), animated: true)
+                    }()], animated: true)
             }
             return v
             }())
