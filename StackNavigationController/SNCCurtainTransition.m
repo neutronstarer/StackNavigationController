@@ -80,7 +80,7 @@
 }
 
 - (void)didPop{
-    [self.view snc_removeTransparentBackground];
+    [self.toView snc_removeTransparentBackground];
 }
 
 - (void)didCancelPop{
