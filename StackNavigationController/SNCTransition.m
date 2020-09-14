@@ -41,7 +41,9 @@
     }
 }
 
-- (void)complete:(BOOL)finished{
+- (BOOL)complete:(BOOL)finished{
+    if (!self.completeBlock) return NO;
+
     // fix navigation display when pop interaction is cancelled
     BOOL push = self.viewController==self.toViewController;
     if (!push && !finished){
@@ -52,8 +54,8 @@
             self.viewController.navigationBarHidden = !self.viewController.navigationBarHidden;
         }
     }
-    if (!self.completeBlock) return;
     self.completeBlock(finished);
+    return YES;
 }
 
 - (void)startTransition:(NSTimeInterval)duration{

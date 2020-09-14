@@ -67,7 +67,10 @@
     [super startTransition:duration];
 }
 
-- (void)complete:(BOOL)finished{
+- (BOOL)complete:(BOOL)finished{
+    if (![super complete:finished]){
+        return NO;
+    }
     if (!finished){
         self.fromView.layer.transform = self.fromTransform;
         self.toView.layer.transform   = self.toTransform;
@@ -84,7 +87,7 @@
             [self.view snc_addTransparentBackground].alpha = 0.5;
         }
     }
-    [super complete:finished];
+    return YES;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{

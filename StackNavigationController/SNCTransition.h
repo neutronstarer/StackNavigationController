@@ -74,7 +74,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)startTransition:(NSTimeInterval)duration NS_SWIFT_NAME(startTransition(_:));
 
 /// Must call this method when transition complete
-- (void)complete:(BOOL)finished  NS_SWIFT_NAME(complete(_:));
+/// @param finished is transition finished
+/// @return success
+- (BOOL)complete:(BOOL)finished  NS_SWIFT_NAME(complete(_:));
 
 @end
 

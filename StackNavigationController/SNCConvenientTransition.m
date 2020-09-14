@@ -34,7 +34,10 @@
     [super startTransition:duration];
 }
 
-- (void)complete:(BOOL)finished{
+- (BOOL)complete:(BOOL)finished{
+    if (![super complete:finished]){
+        return NO;
+    }
     BOOL push = self.viewController == self.toViewController;
     if (finished){
         if (push) [self didPush];
@@ -43,7 +46,7 @@
         if (push) [self didCancelPush];
         else [self didCancelPop];
     }
-    [super complete:finished];
+    return YES;
 }
 
 - (void)willPush{
