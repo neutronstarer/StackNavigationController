@@ -77,7 +77,7 @@
 }
 
 - (nullable NSArray<__kindof UIViewController *> *)snc_original_popToViewController:(UIViewController *)viewController animated:(BOOL)animated{
-    if (self.snc_navigationController){
+    if (!self.snc_navigationController){
         return [self snc_original_popToViewController:viewController animated:animated];
     }
     return [self.snc_navigationController popToViewController:viewController animated:animated completion:nil];
