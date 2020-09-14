@@ -13,7 +13,7 @@
 - (instancetype)init{
     self = [super init];
     self.animationOptions = UIViewAnimationOptionCurveLinear;
-    self.expectedTransitionDuration = 0.35;
+    self.expectedTransitionDuration = 0.3;
     return self;
 }
 
