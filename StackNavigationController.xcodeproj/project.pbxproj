@@ -1,0 +1,709 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CE39740A24F3539A006F9F7E /* StackNavigationController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39740824F3539A006F9F7E /* StackNavigationController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE39741124F353D1006F9F7E /* StackNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE39741024F353D1006F9F7E /* StackNavigationController.m */; };
+		CE39741424F354AC006F9F7E /* UIViewController+SNCPublic.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39741224F354AC006F9F7E /* UIViewController+SNCPublic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE39741824F3555A006F9F7E /* NSObject+SNCPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39741624F3555A006F9F7E /* NSObject+SNCPrivate.h */; };
+		CE39741924F3555A006F9F7E /* NSObject+SNCPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = CE39741724F3555A006F9F7E /* NSObject+SNCPrivate.m */; };
+		CE39741C24F35625006F9F7E /* UINavigationController+SNCPublic.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39741A24F35625006F9F7E /* UINavigationController+SNCPublic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE39741D24F35625006F9F7E /* UINavigationController+SNCPublic.m in Sources */ = {isa = PBXBuildFile; fileRef = CE39741B24F35625006F9F7E /* UINavigationController+SNCPublic.m */; };
+		CE39742024F36343006F9F7E /* SNCTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39741E24F36343006F9F7E /* SNCTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE39742124F36343006F9F7E /* SNCTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = CE39741F24F36343006F9F7E /* SNCTransition.m */; };
+		CE39742424F3639F006F9F7E /* UIViewController+SNCPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39742224F3639F006F9F7E /* UIViewController+SNCPrivate.h */; };
+		CE39742824F3682E006F9F7E /* SNCTransition+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39742624F3682E006F9F7E /* SNCTransition+Private.h */; };
+		CE39742C24F36AE1006F9F7E /* UINavigationController+SNCPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39742A24F36AE1006F9F7E /* UINavigationController+SNCPrivate.h */; };
+		CE39742F24F36B21006F9F7E /* UIViewController+SNCPublic.m in Sources */ = {isa = PBXBuildFile; fileRef = CE39742E24F36B21006F9F7E /* UIViewController+SNCPublic.m */; };
+		CE39743224F39F5D006F9F7E /* SNCPushTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39743024F39F5D006F9F7E /* SNCPushTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE39743324F39F5D006F9F7E /* SNCPushTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = CE39743124F39F5D006F9F7E /* SNCPushTransition.m */; };
+		CE39746224F3A384006F9F7E /* SNCPresentTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39746024F3A384006F9F7E /* SNCPresentTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE39746324F3A384006F9F7E /* SNCPresentTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = CE39746124F3A384006F9F7E /* SNCPresentTransition.m */; };
+		CE39746A24F5434D006F9F7E /* SNCFadeTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = CE39746824F5434D006F9F7E /* SNCFadeTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE39746B24F5434D006F9F7E /* SNCFadeTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = CE39746924F5434D006F9F7E /* SNCFadeTransition.m */; };
+		CE425ABF24F7D07800094375 /* SNCAlertTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = CE675A1724F682B900451DF5 /* SNCAlertTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE425AC024F7D0F700094375 /* SNCActionSheetTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = CE675A1A24F6842F00451DF5 /* SNCActionSheetTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE48AA182508BB9400150098 /* AlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE48AA172508BB9400150098 /* AlertViewController.swift */; };
+		CE48AA1A2508C75000150098 /* ActionSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE48AA192508C75000150098 /* ActionSheetViewController.swift */; };
+		CE48AA1E2508E14400150098 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE48AA1D2508E14400150098 /* SearchViewController.swift */; };
+		CE48AA21250B602B00150098 /* SNCConvenientTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = CE48AA1F250B602B00150098 /* SNCConvenientTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE48AA22250B602B00150098 /* SNCConvenientTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = CE48AA20250B602B00150098 /* SNCConvenientTransition.m */; };
+		CE48AA2C250F4F0F00150098 /* SNCCurtainTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = CE48AA2A250F4F0F00150098 /* SNCCurtainTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE48AA2D250F4F0F00150098 /* SNCCurtainTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = CE48AA2B250F4F0F00150098 /* SNCCurtainTransition.m */; };
+		CE675A0A24F66A0500451DF5 /* UIView+SNCPublic.h in Headers */ = {isa = PBXBuildFile; fileRef = CE675A0824F66A0400451DF5 /* UIView+SNCPublic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE675A0B24F66A0500451DF5 /* UIView+SNCPublic.m in Sources */ = {isa = PBXBuildFile; fileRef = CE675A0924F66A0500451DF5 /* UIView+SNCPublic.m */; };
+		CE675A1E24F7CFFD00451DF5 /* SNCAlertTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = CE675A1824F682B900451DF5 /* SNCAlertTransition.m */; };
+		CE675A1F24F7CFFD00451DF5 /* SNCActionSheetTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = CE675A1B24F6842F00451DF5 /* SNCActionSheetTransition.m */; };
+		CEA040602508ACE00026B5D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA0405F2508ACE00026B5D9 /* AppDelegate.swift */; };
+		CEA040642508ACE00026B5D9 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA040632508ACE00026B5D9 /* RootViewController.swift */; };
+		CEA040692508ACE10026B5D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA040682508ACE10026B5D9 /* Assets.xcassets */; };
+		CEA0406C2508ACE10026B5D9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEA0406A2508ACE10026B5D9 /* LaunchScreen.storyboard */; };
+		CEA040722508ADD20026B5D9 /* StackNavigationController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE39740524F3539A006F9F7E /* StackNavigationController.framework */; };
+		CEA040732508ADD20026B5D9 /* StackNavigationController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE39740524F3539A006F9F7E /* StackNavigationController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CEA040782508AE1B0026B5D9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA040772508AE1B0026B5D9 /* ViewController.swift */; };
+		DE968AA99C8914769952793E /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7200CB675ADF5CCDE71799 /* Pods_Example.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CEA040742508ADD20026B5D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE3973FC24F3539A006F9F7E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CE39740424F3539A006F9F7E;
+			remoteInfo = StackNavigationController;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CEA040762508ADD20026B5D9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CEA040732508ADD20026B5D9 /* StackNavigationController.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		59EC51FFB389603A09560811 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
+		5AC8ECA7C8E7E95B62C5BCB7 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
+		BA7200CB675ADF5CCDE71799 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE39740524F3539A006F9F7E /* StackNavigationController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StackNavigationController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE39740824F3539A006F9F7E /* StackNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StackNavigationController.h; sourceTree = "<group>"; };
+		CE39740924F3539A006F9F7E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE39741024F353D1006F9F7E /* StackNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StackNavigationController.m; sourceTree = "<group>"; };
+		CE39741224F354AC006F9F7E /* UIViewController+SNCPublic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SNCPublic.h"; sourceTree = "<group>"; };
+		CE39741624F3555A006F9F7E /* NSObject+SNCPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+SNCPrivate.h"; sourceTree = "<group>"; };
+		CE39741724F3555A006F9F7E /* NSObject+SNCPrivate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SNCPrivate.m"; sourceTree = "<group>"; };
+		CE39741A24F35625006F9F7E /* UINavigationController+SNCPublic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+SNCPublic.h"; sourceTree = "<group>"; };
+		CE39741B24F35625006F9F7E /* UINavigationController+SNCPublic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+SNCPublic.m"; sourceTree = "<group>"; };
+		CE39741E24F36343006F9F7E /* SNCTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SNCTransition.h; sourceTree = "<group>"; };
+		CE39741F24F36343006F9F7E /* SNCTransition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SNCTransition.m; sourceTree = "<group>"; };
+		CE39742224F3639F006F9F7E /* UIViewController+SNCPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SNCPrivate.h"; sourceTree = "<group>"; };
+		CE39742624F3682E006F9F7E /* SNCTransition+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SNCTransition+Private.h"; sourceTree = "<group>"; };
+		CE39742A24F36AE1006F9F7E /* UINavigationController+SNCPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+SNCPrivate.h"; sourceTree = "<group>"; };
+		CE39742E24F36B21006F9F7E /* UIViewController+SNCPublic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SNCPublic.m"; sourceTree = "<group>"; };
+		CE39743024F39F5D006F9F7E /* SNCPushTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SNCPushTransition.h; sourceTree = "<group>"; };
+		CE39743124F39F5D006F9F7E /* SNCPushTransition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SNCPushTransition.m; sourceTree = "<group>"; };
+		CE39746024F3A384006F9F7E /* SNCPresentTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SNCPresentTransition.h; sourceTree = "<group>"; };
+		CE39746124F3A384006F9F7E /* SNCPresentTransition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SNCPresentTransition.m; sourceTree = "<group>"; };
+		CE39746824F5434D006F9F7E /* SNCFadeTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SNCFadeTransition.h; sourceTree = "<group>"; };
+		CE39746924F5434D006F9F7E /* SNCFadeTransition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SNCFadeTransition.m; sourceTree = "<group>"; };
+		CE48AA172508BB9400150098 /* AlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewController.swift; sourceTree = "<group>"; };
+		CE48AA192508C75000150098 /* ActionSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetViewController.swift; sourceTree = "<group>"; };
+		CE48AA1D2508E14400150098 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		CE48AA1F250B602B00150098 /* SNCConvenientTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SNCConvenientTransition.h; sourceTree = "<group>"; };
+		CE48AA20250B602B00150098 /* SNCConvenientTransition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SNCConvenientTransition.m; sourceTree = "<group>"; };
+		CE48AA2A250F4F0F00150098 /* SNCCurtainTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SNCCurtainTransition.h; sourceTree = "<group>"; };
+		CE48AA2B250F4F0F00150098 /* SNCCurtainTransition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SNCCurtainTransition.m; sourceTree = "<group>"; };
+		CE675A0824F66A0400451DF5 /* UIView+SNCPublic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+SNCPublic.h"; sourceTree = "<group>"; };
+		CE675A0924F66A0500451DF5 /* UIView+SNCPublic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+SNCPublic.m"; sourceTree = "<group>"; };
+		CE675A1724F682B900451DF5 /* SNCAlertTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SNCAlertTransition.h; sourceTree = "<group>"; };
+		CE675A1824F682B900451DF5 /* SNCAlertTransition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SNCAlertTransition.m; sourceTree = "<group>"; };
+		CE675A1A24F6842F00451DF5 /* SNCActionSheetTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SNCActionSheetTransition.h; sourceTree = "<group>"; };
+		CE675A1B24F6842F00451DF5 /* SNCActionSheetTransition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SNCActionSheetTransition.m; sourceTree = "<group>"; };
+		CEA0405D2508ACE00026B5D9 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEA0405F2508ACE00026B5D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		CEA040632508ACE00026B5D9 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		CEA040682508ACE10026B5D9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CEA0406B2508ACE10026B5D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		CEA0406D2508ACE10026B5D9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CEA040772508AE1B0026B5D9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CE39740224F3539A006F9F7E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEA0405A2508ACE00026B5D9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEA040722508ADD20026B5D9 /* StackNavigationController.framework in Frameworks */,
+				DE968AA99C8914769952793E /* Pods_Example.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		50143824B4415E4F3BD1D4A1 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				59EC51FFB389603A09560811 /* Pods-Example.debug.xcconfig */,
+				5AC8ECA7C8E7E95B62C5BCB7 /* Pods-Example.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		CE3973FB24F3539A006F9F7E = {
+			isa = PBXGroup;
+			children = (
+				CE39740724F3539A006F9F7E /* StackNavigationController */,
+				CEA0405E2508ACE00026B5D9 /* Example */,
+				CE39740624F3539A006F9F7E /* Products */,
+				CEA040712508ADD20026B5D9 /* Frameworks */,
+				50143824B4415E4F3BD1D4A1 /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		CE39740624F3539A006F9F7E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CE39740524F3539A006F9F7E /* StackNavigationController.framework */,
+				CEA0405D2508ACE00026B5D9 /* Example.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CE39740724F3539A006F9F7E /* StackNavigationController */ = {
+			isa = PBXGroup;
+			children = (
+				CE425AC124F7F33A00094375 /* transition */,
+				CE39740824F3539A006F9F7E /* StackNavigationController.h */,
+				CE39741024F353D1006F9F7E /* StackNavigationController.m */,
+				CE39741A24F35625006F9F7E /* UINavigationController+SNCPublic.h */,
+				CE39741B24F35625006F9F7E /* UINavigationController+SNCPublic.m */,
+				CE675A0824F66A0400451DF5 /* UIView+SNCPublic.h */,
+				CE675A0924F66A0500451DF5 /* UIView+SNCPublic.m */,
+				CE39741224F354AC006F9F7E /* UIViewController+SNCPublic.h */,
+				CE39742E24F36B21006F9F7E /* UIViewController+SNCPublic.m */,
+				CE39741624F3555A006F9F7E /* NSObject+SNCPrivate.h */,
+				CE39741724F3555A006F9F7E /* NSObject+SNCPrivate.m */,
+				CE39742A24F36AE1006F9F7E /* UINavigationController+SNCPrivate.h */,
+				CE39742224F3639F006F9F7E /* UIViewController+SNCPrivate.h */,
+				CE39740924F3539A006F9F7E /* Info.plist */,
+			);
+			path = StackNavigationController;
+			sourceTree = "<group>";
+		};
+		CE425AC124F7F33A00094375 /* transition */ = {
+			isa = PBXGroup;
+			children = (
+				CE39741E24F36343006F9F7E /* SNCTransition.h */,
+				CE39741F24F36343006F9F7E /* SNCTransition.m */,
+				CE48AA1F250B602B00150098 /* SNCConvenientTransition.h */,
+				CE48AA20250B602B00150098 /* SNCConvenientTransition.m */,
+				CE675A1A24F6842F00451DF5 /* SNCActionSheetTransition.h */,
+				CE675A1B24F6842F00451DF5 /* SNCActionSheetTransition.m */,
+				CE675A1724F682B900451DF5 /* SNCAlertTransition.h */,
+				CE675A1824F682B900451DF5 /* SNCAlertTransition.m */,
+				CE48AA2A250F4F0F00150098 /* SNCCurtainTransition.h */,
+				CE48AA2B250F4F0F00150098 /* SNCCurtainTransition.m */,
+				CE39746824F5434D006F9F7E /* SNCFadeTransition.h */,
+				CE39746924F5434D006F9F7E /* SNCFadeTransition.m */,
+				CE39746024F3A384006F9F7E /* SNCPresentTransition.h */,
+				CE39746124F3A384006F9F7E /* SNCPresentTransition.m */,
+				CE39743024F39F5D006F9F7E /* SNCPushTransition.h */,
+				CE39743124F39F5D006F9F7E /* SNCPushTransition.m */,
+				CE39742624F3682E006F9F7E /* SNCTransition+Private.h */,
+			);
+			name = transition;
+			sourceTree = "<group>";
+		};
+		CEA0405E2508ACE00026B5D9 /* Example */ = {
+			isa = PBXGroup;
+			children = (
+				CEA0405F2508ACE00026B5D9 /* AppDelegate.swift */,
+				CEA040772508AE1B0026B5D9 /* ViewController.swift */,
+				CEA040632508ACE00026B5D9 /* RootViewController.swift */,
+				CE48AA172508BB9400150098 /* AlertViewController.swift */,
+				CE48AA1D2508E14400150098 /* SearchViewController.swift */,
+				CE48AA192508C75000150098 /* ActionSheetViewController.swift */,
+				CEA040682508ACE10026B5D9 /* Assets.xcassets */,
+				CEA0406A2508ACE10026B5D9 /* LaunchScreen.storyboard */,
+				CEA0406D2508ACE10026B5D9 /* Info.plist */,
+			);
+			path = Example;
+			sourceTree = "<group>";
+		};
+		CEA040712508ADD20026B5D9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BA7200CB675ADF5CCDE71799 /* Pods_Example.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CE39740024F3539A006F9F7E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE425AC024F7D0F700094375 /* SNCActionSheetTransition.h in Headers */,
+				CE48AA2C250F4F0F00150098 /* SNCCurtainTransition.h in Headers */,
+				CE39741C24F35625006F9F7E /* UINavigationController+SNCPublic.h in Headers */,
+				CE39743224F39F5D006F9F7E /* SNCPushTransition.h in Headers */,
+				CE39740A24F3539A006F9F7E /* StackNavigationController.h in Headers */,
+				CE39742424F3639F006F9F7E /* UIViewController+SNCPrivate.h in Headers */,
+				CE39746A24F5434D006F9F7E /* SNCFadeTransition.h in Headers */,
+				CE39741824F3555A006F9F7E /* NSObject+SNCPrivate.h in Headers */,
+				CE39741424F354AC006F9F7E /* UIViewController+SNCPublic.h in Headers */,
+				CE48AA21250B602B00150098 /* SNCConvenientTransition.h in Headers */,
+				CE39746224F3A384006F9F7E /* SNCPresentTransition.h in Headers */,
+				CE675A0A24F66A0500451DF5 /* UIView+SNCPublic.h in Headers */,
+				CE39742C24F36AE1006F9F7E /* UINavigationController+SNCPrivate.h in Headers */,
+				CE39742024F36343006F9F7E /* SNCTransition.h in Headers */,
+				CE39742824F3682E006F9F7E /* SNCTransition+Private.h in Headers */,
+				CE425ABF24F7D07800094375 /* SNCAlertTransition.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CE39740424F3539A006F9F7E /* StackNavigationController */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE39740D24F3539A006F9F7E /* Build configuration list for PBXNativeTarget "StackNavigationController" */;
+			buildPhases = (
+				CE39740024F3539A006F9F7E /* Headers */,
+				CE39740124F3539A006F9F7E /* Sources */,
+				CE39740224F3539A006F9F7E /* Frameworks */,
+				CE39740324F3539A006F9F7E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StackNavigationController;
+			productName = StackNavigationController;
+			productReference = CE39740524F3539A006F9F7E /* StackNavigationController.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		CEA0405C2508ACE00026B5D9 /* Example */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEA0406E2508ACE10026B5D9 /* Build configuration list for PBXNativeTarget "Example" */;
+			buildPhases = (
+				8CAAC5D677A766F706D7D917 /* [CP] Check Pods Manifest.lock */,
+				CEA040592508ACE00026B5D9 /* Sources */,
+				CEA0405A2508ACE00026B5D9 /* Frameworks */,
+				CEA0405B2508ACE00026B5D9 /* Resources */,
+				CEA040762508ADD20026B5D9 /* Embed Frameworks */,
+				C62CD9CEAAA2F35143F9F025 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CEA040752508ADD20026B5D9 /* PBXTargetDependency */,
+			);
+			name = Example;
+			productName = Example;
+			productReference = CEA0405D2508ACE00026B5D9 /* Example.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CE3973FC24F3539A006F9F7E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1170;
+				LastUpgradeCheck = 1160;
+				ORGANIZATIONNAME = neutronstarer;
+				TargetAttributes = {
+					CE39740424F3539A006F9F7E = {
+						CreatedOnToolsVersion = 11.6;
+					};
+					CEA0405C2508ACE00026B5D9 = {
+						CreatedOnToolsVersion = 11.7;
+						LastSwiftMigration = 1170;
+					};
+				};
+			};
+			buildConfigurationList = CE3973FF24F3539A006F9F7E /* Build configuration list for PBXProject "StackNavigationController" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CE3973FB24F3539A006F9F7E;
+			productRefGroup = CE39740624F3539A006F9F7E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CE39740424F3539A006F9F7E /* StackNavigationController */,
+				CEA0405C2508ACE00026B5D9 /* Example */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CE39740324F3539A006F9F7E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEA0405B2508ACE00026B5D9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEA0406C2508ACE10026B5D9 /* LaunchScreen.storyboard in Resources */,
+				CEA040692508ACE10026B5D9 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8CAAC5D677A766F706D7D917 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Example-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C62CD9CEAAA2F35143F9F025 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CE39740124F3539A006F9F7E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE39741D24F35625006F9F7E /* UINavigationController+SNCPublic.m in Sources */,
+				CE39743324F39F5D006F9F7E /* SNCPushTransition.m in Sources */,
+				CE39741924F3555A006F9F7E /* NSObject+SNCPrivate.m in Sources */,
+				CE39742F24F36B21006F9F7E /* UIViewController+SNCPublic.m in Sources */,
+				CE39746324F3A384006F9F7E /* SNCPresentTransition.m in Sources */,
+				CE675A1F24F7CFFD00451DF5 /* SNCActionSheetTransition.m in Sources */,
+				CE675A0B24F66A0500451DF5 /* UIView+SNCPublic.m in Sources */,
+				CE39741124F353D1006F9F7E /* StackNavigationController.m in Sources */,
+				CE48AA22250B602B00150098 /* SNCConvenientTransition.m in Sources */,
+				CE675A1E24F7CFFD00451DF5 /* SNCAlertTransition.m in Sources */,
+				CE48AA2D250F4F0F00150098 /* SNCCurtainTransition.m in Sources */,
+				CE39746B24F5434D006F9F7E /* SNCFadeTransition.m in Sources */,
+				CE39742124F36343006F9F7E /* SNCTransition.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEA040592508ACE00026B5D9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE48AA1E2508E14400150098 /* SearchViewController.swift in Sources */,
+				CE48AA1A2508C75000150098 /* ActionSheetViewController.swift in Sources */,
+				CEA040782508AE1B0026B5D9 /* ViewController.swift in Sources */,
+				CEA040642508ACE00026B5D9 /* RootViewController.swift in Sources */,
+				CEA040602508ACE00026B5D9 /* AppDelegate.swift in Sources */,
+				CE48AA182508BB9400150098 /* AlertViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CEA040752508ADD20026B5D9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CE39740424F3539A006F9F7E /* StackNavigationController */;
+			targetProxy = CEA040742508ADD20026B5D9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		CEA0406A2508ACE10026B5D9 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CEA0406B2508ACE10026B5D9 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CE39740B24F3539A006F9F7E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		CE39740C24F3539A006F9F7E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		CE39740E24F3539A006F9F7E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = StackNavigationController/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neutronstarer.stacknavigationcontroller;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CE39740F24F3539A006F9F7E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = StackNavigationController/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neutronstarer.stacknavigationcontroller;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CEA0406F2508ACE10026B5D9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 59EC51FFB389603A09560811 /* Pods-Example.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = N4WZ33Z6KM;
+				INFOPLIST_FILE = Example/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neutronstarer.stacknavigationcontroller.example;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CEA040702508ACE10026B5D9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5AC8ECA7C8E7E95B62C5BCB7 /* Pods-Example.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = N4WZ33Z6KM;
+				INFOPLIST_FILE = Example/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neutronstarer.stacknavigationcontroller.example;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CE3973FF24F3539A006F9F7E /* Build configuration list for PBXProject "StackNavigationController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE39740B24F3539A006F9F7E /* Debug */,
+				CE39740C24F3539A006F9F7E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE39740D24F3539A006F9F7E /* Build configuration list for PBXNativeTarget "StackNavigationController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE39740E24F3539A006F9F7E /* Debug */,
+				CE39740F24F3539A006F9F7E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEA0406E2508ACE10026B5D9 /* Build configuration list for PBXNativeTarget "Example" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEA0406F2508ACE10026B5D9 /* Debug */,
+				CEA040702508ACE10026B5D9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CE3973FC24F3539A006F9F7E /* Project object */;
+}
