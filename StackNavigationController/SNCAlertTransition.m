@@ -44,12 +44,12 @@
             [self complete:!self.interactionCancelled && finished];
         }];
         [UIView animateWithDuration:duration/2.0 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            [self.view snc_addTransparentBackground].alpha = 2/3.0;
+            [self.view snc_addTransparentBackground].alpha = 0.5;
         } completion:nil];
         [super startTransition:duration];
         return;
     }
-    [self.view snc_addTransparentBackground].alpha = 2/3.0;
+    [self.view snc_addTransparentBackground].alpha = 0.5;
     self.fromAlpha                                 = self.view.alpha;
     self.fromTransform                             = self.view.layer.transform;
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
@@ -75,7 +75,7 @@
         if (finished||!self.transparent){
             [self.view snc_removeTransparentBackground];
         }else{
-            [self.view snc_addTransparentBackground].alpha = 2/3.0;
+            [self.view snc_addTransparentBackground].alpha = 0.5;
         }
     }
     [super complete:finished];

@@ -8,8 +8,9 @@
 
 #import "SNCActionSheetTransition.h"
 #import "UIView+SNCPublic.h"
+#import "StackNavigationController.h"
 
-@interface SNCActionSheetTransition()
+@interface SNCActionSheetTransition() <UIGestureRecognizerDelegate>
 
 @property (nonatomic,assign) CATransform3D fromTransform;
 @property (nonatomic,assign) CATransform3D toTransform;
@@ -33,21 +34,27 @@
     self.viewController.navigationBarHidden = YES;
     BOOL push = self.viewController==self.toViewController;
     if (push){
-        [self.view snc_addTransparentBackground].alpha = 0;
+        UIView *transparentBackground = [self.view snc_addTransparentBackground];
+        transparentBackground.alpha = 0;
+        [transparentBackground addGestureRecognizer:({
+            UITapGestureRecognizer *v = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)];
+            v.delegate = self;
+            v;
+        })];
         self.fromTransform                             = self.fromView.layer.transform;
         self.toTransform                               = CATransform3DTranslate(CATransform3DIdentity, 0, CGRectGetHeight(self.view.bounds), 0);
         self.view.layer.transform                      = self.toTransform;
         [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
             self.view.layer.transform                      = CATransform3DIdentity;
             self.fromView.layer.transform                  = CATransform3DScale(CATransform3DIdentity, 0.985, 0.985, 1);
-            [self.view snc_addTransparentBackground].alpha = 2/3.0;
+            [self.view snc_addTransparentBackground].alpha = 0.5;
         } completion:^(BOOL finished) {
             [self complete:!self.interactionCancelled &&finished];
         }];
         [super startTransition:duration];
         return;
     }
-    [self.view snc_addTransparentBackground].alpha = 2/3.0;
+    [self.view snc_addTransparentBackground].alpha = 0.5;
     self.fromTransform                             = self.view.layer.transform;
     self.toTransform                               = self.toView.layer.transform;
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
@@ -74,10 +81,18 @@
         if (finished||!self.transparent){
             [self.view snc_removeTransparentBackground];
         }else{
-            [self.view snc_addTransparentBackground].alpha = 2/3.0;
+            [self.view snc_addTransparentBackground].alpha = 0.5;
         }
     }
     [super complete:finished];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    return self.shouldPopWhenTouchTransparentBackground;
+}
+
+- (void)tap{
+    [self.containerNavigationController popViewControllerAnimated:YES];
 }
 
 - (BOOL)resignStatusBarController{

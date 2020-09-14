@@ -24,6 +24,7 @@ class ActionSheetViewController: UIViewController {
     func build() {
         self.snc_transition = {()->SNCActionSheetTransition in
             let v = SNCActionSheetTransition()
+            v.shouldPopWhenTouchTransparentBackground = true
             return v
         }()
     }

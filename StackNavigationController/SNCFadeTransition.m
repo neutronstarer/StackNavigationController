@@ -27,7 +27,7 @@
 }
 
 - (void)pushing{
-    [self.toView snc_addTransparentBackground].alpha = 2/3.0;
+    [self.toView snc_addTransparentBackground].alpha = 0.5;
     self.toView.alpha = 1;
 }
 
@@ -41,7 +41,7 @@
 }
 
 - (void)willPop{
-    [self.fromView snc_addTransparentBackground].alpha = 2/3.0;
+    [self.fromView snc_addTransparentBackground].alpha = 0.5;
     self.fromView.alpha = 1;
 }
 
@@ -55,7 +55,7 @@
 }
 
 - (void)didCancelPop{
-    if (self.transparent) [self.fromView snc_addTransparentBackground].alpha = 2/3.0;
+    if (self.transparent) [self.fromView snc_addTransparentBackground].alpha = 0.5;
     else [self.fromView snc_removeTransparentBackground];
     self.fromView.alpha = 1;
 }

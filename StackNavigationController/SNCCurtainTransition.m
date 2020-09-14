@@ -26,7 +26,7 @@
 }
 
 - (void)willPush{
-    [self.fromView snc_addTransparentBackground].alpha = 2/3.0;
+    [self.fromView snc_addTransparentBackground].alpha = 0.5;
     self.fromView.layer.transform = CATransform3DIdentity;
     self.toView.layer.transform = CATransform3DScale(CATransform3DIdentity, 0.985, 0.985, 1);
     NSInteger fromIndex = [self fromIndex];
@@ -74,7 +74,7 @@
 }
 
 - (void)poping{
-    [self.toView snc_addTransparentBackground].alpha = 2/3.0;
+    [self.toView snc_addTransparentBackground].alpha = 0.5;
     self.toView.layer.transform = CATransform3DIdentity;
     self.fromView.layer.transform = CATransform3DScale(CATransform3DIdentity, 0.985, 0.985, 1);
 }

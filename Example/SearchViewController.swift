@@ -193,7 +193,7 @@ fileprivate class SearchTransition: SNCConvenientTransition {
     }
     
     override func pushing() {
-        view.snc_addTransparentBackground().alpha = 2/3.0
+        view.snc_addTransparentBackground().alpha = 0.5
         
         if (shouldHiddenNavigationBarOfPrevViewController){
             self.fromViewController!.setNavigationBarHidden(true, animated:true)
@@ -237,7 +237,7 @@ fileprivate class SearchTransition: SNCConvenientTransition {
     }
     
     override func willPop() {
-        view.snc_addTransparentBackground().alpha = 2/3.0
+        view.snc_addTransparentBackground().alpha = 0.5
         
         fromView.alpha = 1
         
@@ -287,7 +287,7 @@ fileprivate class SearchTransition: SNCConvenientTransition {
         if !transparent {
             view.snc_removeTransparentBackground()
         }else{
-            view.snc_addTransparentBackground().alpha = 2/3.0
+            view.snc_addTransparentBackground().alpha = 0.5
         }
         
         fromView.alpha = 1

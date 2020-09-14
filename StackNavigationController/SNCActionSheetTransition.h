@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SNCActionSheetTransition : SNCTransition
 
 @property (nonatomic, assign) CGSize contentSize;
+@property (nonatomic, assign) BOOL   shouldPopWhenTouchTransparentBackground;
 
 @end
 

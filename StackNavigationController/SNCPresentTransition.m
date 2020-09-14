@@ -28,7 +28,7 @@
 }
 
 - (void)pushing{
-    [self.toView snc_addTransparentBackground].alpha = 2/3.0;
+    [self.toView snc_addTransparentBackground].alpha = 0.5;
     self.fromView.layer.transform = CATransform3DScale(CATransform3DIdentity, 0.985, 0.985, 1);
     self.toView.layer.transform = CATransform3DIdentity;
 }
@@ -44,7 +44,7 @@
 }
 
 - (void)willPop{
-    [self.fromView snc_addTransparentBackground].alpha = 2/3.0;
+    [self.fromView snc_addTransparentBackground].alpha = 0.5;
     self.fromView.layer.transform = CATransform3DIdentity;
     self.toView.layer.transform = CATransform3DScale(CATransform3DIdentity, 0.985, 0.985, 1);
 }
@@ -60,7 +60,7 @@
 }
 
 - (void)didCancelPop{
-    if (self.transparent) [self.fromView snc_addTransparentBackground].alpha = 2/3.0;
+    if (self.transparent) [self.fromView snc_addTransparentBackground].alpha = 0.5;
     else [self.fromView snc_removeTransparentBackground];
     self.fromView.layer.transform = CATransform3DIdentity;
     self.toView.layer.transform = CATransform3DScale(CATransform3DIdentity, 0.985, 0.985, 1);
