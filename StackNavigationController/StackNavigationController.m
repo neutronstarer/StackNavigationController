@@ -306,7 +306,15 @@
         })];
         v;
     });
-    
+    if (!NSEqualRanges(NSMakeRange(0, 0), clearRange)){
+        self.navigationControllers = ({
+            NSMutableArray *v = [newNavigationControllers mutableCopy];
+            [v removeObjectsInRange:clearRange];
+            v;
+        });
+    }else{
+        self.navigationControllers = newNavigationControllers;
+    }
     BOOL visableFlags[newNavigationControllers.count];
     {
         UIViewController *newStatusBarController = nil;
@@ -473,15 +481,6 @@
     [transitionBlocks enumerateObjectsUsingBlock:^(void (^obj)(void), NSUInteger idx, BOOL * stop) {
         obj();
     }];
-    if (!NSEqualRanges(NSMakeRange(0, 0), clearRange)){
-        self.navigationControllers = ({
-            NSMutableArray *v = [newNavigationControllers mutableCopy];
-            [v removeObjectsInRange:clearRange];
-            v;
-        });
-    }else{
-        self.navigationControllers = newNavigationControllers;
-    }
     if (animated){
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
@@ -513,6 +512,8 @@
         [oldNavigationControllers subarrayWithRange:range];
     });
     
+    self.navigationControllers = [oldNavigationControllers subarrayWithRange:NSMakeRange(0, index+1)];
+
     BOOL visableFlags[oldNavigationControllers.count];
     {
         UIViewController *newStatusBarController = nil;
@@ -670,7 +671,6 @@
     [transitionBlocks enumerateObjectsUsingBlock:^(void (^obj)(void), NSUInteger idx, BOOL * stop) {
         obj();
     }];
-    self.navigationControllers = [oldNavigationControllers subarrayWithRange:NSMakeRange(0, index+1)];
     if (animated){
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
