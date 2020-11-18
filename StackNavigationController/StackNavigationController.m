@@ -141,7 +141,7 @@
 }
 
 - (nullable NSArray<__kindof UIViewController *> *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated completion:(void(^_Nullable)(BOOL finished))completion{
-    return [self popToRootViewControllerWithDuration:animated?self.viewControllers.lastObject.snc_transition.expectedTransitionDuration:0 completion:completion];
+    return [self popToViewController:viewController duration:animated?self.viewControllers.lastObject.snc_transition.expectedTransitionDuration:0 completion:completion];
 }
 
 - (void)setViewControllers:(NSArray<__kindof UIViewController *> *)viewControllers duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
