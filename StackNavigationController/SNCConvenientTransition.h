@@ -6,7 +6,8 @@
 //  Copyright © 2020 neutronstarer. All rights reserved.
 //
 
-#import "SNCTransition.h"
+#import <StackNavigationController/SNCTransition.h>
+#import <StackNavigationController/UIView+SNCPublic.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -60,6 +60,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return v
     }()
     
+    lazy var animationLayer = {()->CALayer in
+        let v = CALayer()
+        v.backgroundColor = UIColor.red.cgColor
+        return v
+    }()
+    
     lazy var searchViewController = {()->SearchViewController in
         guard let stackNavigationController = self.snc_navigationController else {
             fatalError("only support StackNavigationController")
@@ -93,6 +99,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.view.backgroundColor = UIColor.white
         //        self.automaticallyAdjustsScrollViewInsets = false
         view.addSubview(tableView)
+        view.layer.addSublayer(animationLayer)
+        animationLayer.frame = CGRect.init(x: 100, y: 100, width: 50, height: 50)
+        let animation = CABasicAnimation.init(keyPath: "transform.rotation.z")
+        animation.repeatCount = 100000
+        animation.duration = 1
+        animation.byValue = Double.pi*2
+        animation.isRemovedOnCompletion = false
+        animationLayer.add(animation, forKey: "transform.rotation.z")
         tableView.snp.makeConstraints { (make) in
             //            if #available(iOS 11.0, *) {
             //                make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)

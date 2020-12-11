@@ -11,24 +11,39 @@
 
 @interface SNCAlertTransition()
 
-@property (nonatomic, assign) CGFloat       fromAlpha;
-@property (nonatomic, assign) CATransform3D fromTransform;
+@property (nonatomic, assign) CGFloat            fromAlpha;
+@property (nonatomic, assign) CATransform3D      fromTransform;
+@property (nonatomic, weak  ) NSLayoutConstraint *widthConstraint;
+@property (nonatomic, weak  ) NSLayoutConstraint *heightConstraint;
 
 @end
 
 @implementation SNCAlertTransition
 
 - (void)didMoveToSuperview{
-    CGSize size = self.contentSize;
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:self.contentSize.width];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:self.contentSize.height];
     [self.view.superview addConstraints:@[
         [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view.superview attribute:NSLayoutAttributeCenterX multiplier:1 constant:0],
         [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view.superview attribute:NSLayoutAttributeCenterY multiplier:1 constant:0],
-        [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:size.width],
-        [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:size.height],
+        widthConstraint,
+        heightConstraint,
     ]];
+    self.widthConstraint = widthConstraint;
+    self.heightConstraint = heightConstraint;
     [super didMoveToSuperview];
 }
+
+- (void)setContentSize:(CGSize)contentSize{
+    if (CGSizeEqualToSize(contentSize, _contentSize)){
+        return;
+    }
+    _contentSize = contentSize;
+    if (self.widthConstraint) self.widthConstraint.constant = contentSize.width;
+    if (self.heightConstraint) self.heightConstraint.constant = contentSize.height;
+}
+
 
 - (void)startTransition:(NSTimeInterval)duration{
     self.viewController.navigationBarHidden = YES;

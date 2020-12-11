@@ -12,10 +12,11 @@
 
 @interface SNCTransition()
 
-@property (nonatomic, weak) StackNavigationController *containerNavigationController;
-@property (nonatomic, weak) UINavigationController    *viewController;
-@property (nonatomic, weak) UINavigationController    *fromViewController;
-@property (nonatomic, weak) UINavigationController    *toViewController;
+@property (nonatomic, weak  ) StackNavigationController *containerNavigationController;
+@property (nonatomic, weak  ) UINavigationController    *viewController;
+@property (nonatomic, weak  ) UINavigationController    *fromViewController;
+@property (nonatomic, weak  ) UINavigationController    *toViewController;
+@property (nonatomic, assign) NSTimeInterval            animationDuration;
 
 @property (nonatomic, copy) void(^completeBlock)(BOOL finished);
 @property (nonatomic, copy) BOOL(^interactionCancelledBlock)(void);
@@ -59,6 +60,7 @@
 }
 
 - (void)startTransition:(NSTimeInterval)duration{
+    self.animationDuration = duration;
     // fix navigation display when poping to pre view controller
     BOOL push = self.viewController==self.toViewController;
     if (push) {

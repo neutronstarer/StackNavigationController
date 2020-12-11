@@ -12,6 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// SNCTransition can be treat as union of transitionContext and transitioning a view controller has one
 @interface SNCTransition : NSObject
 
 #pragma --
@@ -38,6 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma --
 #pragma -- transition context
+
+/// Animation duration
+@property (nonatomic, assign, readonly        ) NSTimeInterval                     animationDuration;
 
 /// Current associated view controller
 /// Relationship is one-to-one,  a transition <---->a view controller

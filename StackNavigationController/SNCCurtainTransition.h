@@ -6,7 +6,7 @@
 //  Copyright © 2020 neutronstarer. All rights reserved.
 //
 
-#import <StackNavigationController/StackNavigationController.h>
+#import <StackNavigationController/SNCConvenientTransition.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

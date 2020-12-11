@@ -14,7 +14,6 @@
 
 @interface StackNavigationController ()
 
-@property (nonatomic, assign) BOOL                busy;
 @property (nonatomic, assign) Class               navigationControllerClass;
 @property (nonatomic, strong) NSArray             *navigationControllers;
 
@@ -29,6 +28,8 @@
 
 @property (nonatomic, strong) UIGestureRecognizer *interactivePopGestureRecognizer;
 @property (nonatomic, assign) CGPoint             gestureRecognizerStartPoint;
+
+@property (nonatomic, strong) dispatch_queue_t    lockQueue;
 
 @property (nonatomic, copy  ) void(^interactionWillCancel)(void);
 @property (nonatomic, copy  ) void(^interactionDidComplete)(void);
@@ -145,131 +146,70 @@
 }
 
 - (void)setViewControllers:(NSArray<__kindof UIViewController *> *)viewControllers duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
-    if (self.busy) {
-        if (completion) completion(NO);
-        return;
-    }
-    self.busy=YES;
     if (viewControllers.count==0){
-        self.busy=NO;
         if (completion) completion(NO);
         return;
     }
-    __weak typeof(self) weakSelf=self;
     [self _pushViewControllers:viewControllers clearRange:NSMakeRange(0, self.viewControllers.count) duration:duration completion:^(BOOL finished){
-        __strong typeof(weakSelf) self=weakSelf;
-        self.busy=NO;
         if (completion) completion(finished);
     }];
 }
 
 - (void)pushViewController:(__kindof UIViewController *)viewController duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
-    if (self.busy) {
-        if (completion) completion(NO);
-        return;
-    }
-    self.busy=YES;
-    __weak typeof(self) weakSelf=self;
     [self _pushViewControllers:@[viewController] clearRange:NSMakeRange(0, 0) duration:duration completion:^(BOOL finished){
-        __strong typeof(weakSelf) self=weakSelf;
-        self.busy=NO;
         if (completion) completion(finished);
     }];
 }
 
 - (void)pushReplaceViewController:(UIViewController *)viewController duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
-    if (self.busy) {
-        if (completion) completion(NO);
-        return;
-    }
-    self.busy=YES;
-    __weak typeof(self) weakSelf=self;
     [self _pushViewControllers:@[viewController] clearRange:NSMakeRange(self.navigationControllers.count-1, 1) duration:duration completion:^(BOOL finished){
-        __strong typeof(weakSelf) self=weakSelf;
-        self.busy=NO;
         if (completion) completion(finished);
     }];
 }
 
 - (void)pushViewControllers:(NSArray<__kindof UIViewController *> *)viewControllers duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
-    if (self.busy) {
-        if (completion) completion(NO);
-        return;
-    }
-    self.busy=YES;
     if (viewControllers.count==0){
-        self.busy=NO;
         if (completion) completion(NO);
         return;
     }
-    __weak typeof(self) weakSelf=self;
     [self _pushViewControllers:viewControllers clearRange:NSMakeRange(0, 0) duration:duration completion:^(BOOL finished){
-        __strong typeof(weakSelf) self=weakSelf;
-        self.busy=NO;
         if (completion) completion(finished);
     }];
 }
 
 
 - (nullable __kindof UIViewController *)popViewControllerWithDuration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
-    if (self.busy) {
-        if (completion) completion(NO);
-        return nil;
-    }
-    self.busy=YES;
+
     if (self.viewControllers.count<2){
-        self.busy=NO;
         if (completion) completion(NO);
         return nil;
     }
-    __weak typeof(self) weakSelf=self;
     return [self _popToIndex:self.viewControllers.count-2 duration:duration completion:^(BOOL finished){
-        __strong typeof(weakSelf) self=weakSelf;
-        self.busy=NO;
         if (completion) completion(finished);
     }].lastObject;
 }
 
 - (nullable NSArray<__kindof UIViewController *> *)popToRootViewControllerWithDuration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
-    if (self.busy) {
-        if (completion) completion(NO);
-        return nil;
-    }
-    self.busy=YES;
     if (self.viewControllers.count<2){
-        self.busy=NO;
         if (completion) completion(NO);
         return nil;
     }
-    __weak typeof(self) weakSelf=self;
     return [self _popToIndex:0 duration:duration completion:^(BOOL finished){
-        __strong typeof(weakSelf) self=weakSelf;
-        self.busy=NO;
         if (completion) completion(finished);
     }];
 }
 
 - (nullable NSArray<__kindof UIViewController *> *)popToViewController:(UIViewController *)viewController duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
-    if (self.busy) {
-        if (completion) completion(NO);
-        return nil;
-    }
-    self.busy=YES;
     NSInteger index=[self.viewControllers indexOfObject:viewController];
     if (index==NSNotFound){
-        self.busy=NO;
         if (completion) completion(NO);
         return nil;
     }
     if (index==self.viewControllers.count-1){
-        self.busy=NO;
         if (completion) completion(NO);
         return nil;
     }
-    __weak typeof(self) weakSelf=self;
     return [self _popToIndex:index duration:duration completion:^(BOOL finished){
-        __strong typeof(weakSelf) self=weakSelf;
-        self.busy=NO;
         if (completion) completion(finished);
     }];
 }
@@ -281,15 +221,6 @@
 /// @param completion completion block
 - (void)_pushViewControllers:(NSArray<__kindof UIViewController *> *)viewControllers clearRange:(NSRange)clearRange duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
     __weak typeof(self) weakSelf = self;
-    BOOL animated = duration>0;
-    __block BOOL cancelled = NO;
-    self.animationDuration = duration;
-    dispatch_group_t group = dispatch_group_create();
-    NSMutableArray <void(^)(void)> *willCancelBlocks = [NSMutableArray arrayWithCapacity:3];
-    NSMutableArray <void(^)(void)> *didCancelBlocks  = [NSMutableArray arrayWithCapacity:3];
-    NSMutableArray <void(^)(void)> *didFinishBlocks  = [NSMutableArray arrayWithCapacity:3];
-    NSMutableArray <void(^)(void)> *transitionBlocks = [NSMutableArray arrayWithCapacity:3];
-
     NSArray<UINavigationController *> *oldNavigationControllers = ({
         [self.navigationControllers copy];
     });
@@ -306,204 +237,203 @@
         })];
         v;
     });
-    if (!NSEqualRanges(NSMakeRange(0, 0), clearRange)){
+    if (NSEqualRanges(NSMakeRange(0, 0), clearRange)){
+        self.navigationControllers = newNavigationControllers;
+    }else{
         self.navigationControllers = ({
             NSMutableArray *v = [newNavigationControllers mutableCopy];
             [v removeObjectsInRange:clearRange];
             v;
         });
-    }else{
-        self.navigationControllers = newNavigationControllers;
     }
-    BOOL visableFlags[newNavigationControllers.count];
-    {
-        UIViewController *newStatusBarController = nil;
-        UIViewController *newRotationController  = nil;
-        for (NSInteger newCount = newNavigationControllers.count-1, i=newCount; i>=0; i--){
-            if (i==newCount) {
-                visableFlags[i]=YES;
-            }else{
-                if (i == clearRange.location-1){
-                    NSInteger next = i+clearRange.length+1;
-                    UIViewController *nextViewController = newNavigationControllers[next];
-                    visableFlags[i]=visableFlags[next]?nextViewController.snc_transition.transparent:NO;
-                }else if(i>clearRange.location+clearRange.length || i<clearRange.location-1){
-                    NSInteger next = i+1;
-                    UIViewController *nextViewController = newNavigationControllers[next];
-                    visableFlags[i]=visableFlags[next]?nextViewController.snc_transition.transparent:NO;
+    dispatch_async(self.lockQueue, ^{
+        dispatch_group_t group = dispatch_group_create();
+        BOOL animated = duration>0;
+        __block BOOL cancelled = NO;
+        __block void (^completeBlock)(BOOL finished);
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            __strong typeof (weakSelf) self = weakSelf;
+            self.animationDuration = duration;
+            NSMutableArray <void(^)(void)> *willCancelBlocks = [NSMutableArray arrayWithCapacity:3];
+            NSMutableArray <void(^)(void)> *didCancelBlocks  = [NSMutableArray arrayWithCapacity:3];
+            NSMutableArray <void(^)(void)> *didFinishBlocks  = [NSMutableArray arrayWithCapacity:3];
+            NSMutableArray <void(^)(void)> *transitionBlocks = [NSMutableArray arrayWithCapacity:3];
+            BOOL visableFlags[newNavigationControllers.count];
+            {
+                UIViewController *newStatusBarController = nil;
+                UIViewController *newRotationController  = nil;
+                for (NSInteger newCount = newNavigationControllers.count-1, i=newCount; i>=0; i--){
+                    if (i==newCount) {
+                        visableFlags[i]=YES;
+                    }else{
+                        if (i == clearRange.location-1){
+                            NSInteger next = i+clearRange.length+1;
+                            UIViewController *nextViewController = newNavigationControllers[next];
+                            visableFlags[i]=visableFlags[next]?nextViewController.snc_transition.transparent:NO;
+                        }else if(i>clearRange.location+clearRange.length || i<clearRange.location-1){
+                            NSInteger next = i+1;
+                            UIViewController *nextViewController = newNavigationControllers[next];
+                            visableFlags[i]=visableFlags[next]?nextViewController.snc_transition.transparent:NO;
+                        }else{
+                            visableFlags[i] = NO;
+                        }
+                    }
+                    if (!visableFlags[i]) continue;
+                    UIViewController *viewController = [newNavigationControllers[i] topViewController];
+                    if (!newStatusBarController){
+                        if (!viewController.snc_transition.resignStatusBarController) newStatusBarController = viewController;
+                    }
+                    if (!newRotationController){
+                        if (!viewController.snc_transition.resignRotationController) newRotationController = viewController;
+                    }
+                }
+                __weak UIViewController *oldStatusBarController = self.statusBarController;
+                __weak UIViewController *oldRotationController = self.rotationController;
+                self.statusBarController = newStatusBarController;
+                self.rotationController = newRotationController;
+                [willCancelBlocks addObject:^{
+                    __strong typeof(weakSelf) self=weakSelf;
+                    //reverse controller
+                    self.statusBarController = oldStatusBarController;
+                    self.rotationController = oldRotationController;
+                }];
+            }
+            __block void (^willCancelBlock)(void)=^{
+                for (NSInteger i=willCancelBlocks.count-1;i>=0;i--){
+                    willCancelBlocks[i]();
+                }
+            };
+            __block void (^didCancelBlock)(void) = ^{
+                __strong typeof(weakSelf) self=weakSelf;
+                for (NSInteger i=0,count=didCancelBlocks.count;i<count;i++){
+                    didCancelBlocks[i]();
+                }
+                //reverse navigation controllers
+                self.navigationControllers = oldNavigationControllers;
+                if (completion) completion(NO);
+            };
+            __block void (^didFinishBlock)(void)=^{
+                for (NSInteger i=didFinishBlocks.count-1;i>=0;i--){
+                    didFinishBlocks[i]();
+                }
+                if (completion) completion(YES);
+            };
+            completeBlock = ^(BOOL finished){
+                __strong typeof(weakSelf) self=weakSelf;
+                if (finished && didFinishBlock) didFinishBlock();
+                else if (didCancelBlock) didCancelBlock();
+                didCancelBlock = nil;
+                didFinishBlock = nil;
+                self.interactionWillCancel = nil;
+                self.interactionDidComplete = nil;
+            };
+            self.interactionWillCancel = ^{
+                if (!cancelled) cancelled = YES;
+                willCancelBlock();
+            };
+            self.interactionDidComplete = ^{
+                if (cancelled) completeBlock(!cancelled);
+            };
+            BOOL appeared = self.view.superview?YES:NO;
+            for (NSInteger i = 0, count = newNavigationControllers.count; i < count; i++){
+                __weak UINavigationController *navigationController = newNavigationControllers[i];
+                __weak SNCTransition *transition = navigationController.snc_transition;
+                transition.containerNavigationController = self;
+                transition.viewController                = navigationController;
+                transition.fromViewController            = i>0?newNavigationControllers[i-1]:nil;
+                transition.toViewController              = navigationController;
+                if (visableFlags[i]) {
+                    if (!navigationController.parentViewController){
+                        if(appeared) [navigationController beginAppearanceTransition:YES animated:animated];
+                        [self snc_addChildViewController:navigationController];
+                        [self.view addSubview:navigationController.view];
+        //                if (appeared){
+        //                    // ensure view`s frame
+        //                    [navigationController.view layoutIfNeeded];
+        //                }
+                        [transition didMoveToSuperview];
+                        if (appeared){
+                            // force layout for calling `viewDidLoad` of `toViewController`
+        //                    [navigationController.view layoutIfNeeded];
+                        }
+                        [willCancelBlocks addObject:^{
+                            if(appeared) [navigationController beginAppearanceTransition:NO animated:animated];
+                        }];
+                        [didCancelBlocks addObject:^{
+                            __strong typeof(weakSelf) self=weakSelf;
+                            [navigationController didMoveToParentViewController:self];
+                            [navigationController willMoveToParentViewController:nil];
+                            [navigationController.view removeFromSuperview];
+                            [navigationController removeFromParentViewController];
+                            if(appeared) [navigationController endAppearanceTransition];
+                        }];
+                        [didFinishBlocks addObject:^{
+                            __strong typeof(weakSelf) self=weakSelf;
+                            [navigationController didMoveToParentViewController:self];
+                            if(appeared) [navigationController endAppearanceTransition];
+                            navigationController.interactivePopGestureRecognizer.enabled = NO;
+                        }];
+                    }
                 }else{
-                    visableFlags[i] = NO;
+                    if (navigationController.parentViewController){
+                        if(appeared) [navigationController beginAppearanceTransition:NO animated:animated];
+                        [navigationController willMoveToParentViewController:nil];
+                        [willCancelBlocks addObject:^{
+                            if(appeared) [navigationController beginAppearanceTransition:YES animated:animated];
+                        }];
+                        [didCancelBlocks addObject:^{
+                            __strong typeof(weakSelf) self=weakSelf;
+                            if(appeared) [navigationController endAppearanceTransition];
+                            [navigationController removeFromParentViewController];
+                            [self snc_addChildViewController:navigationController];
+                            [navigationController didMoveToParentViewController:self];
+                        }];
+                        [didFinishBlocks addObject:^{
+                            if(appeared) [navigationController endAppearanceTransition];
+                            [navigationController.view removeFromSuperview];
+                            [navigationController removeFromParentViewController];
+                        }];
+                    }
+                }
+                if (i>=oldNavigationControllers.count){
+                    transition.interactionCancelledBlock = ^BOOL{
+                        return cancelled;
+                    };
+                    transition.completeBlock = ^(BOOL finished) {
+                        dispatch_group_leave(group);
+                        transition.completeBlock = nil;
+                    };
+                    [didCancelBlocks addObject:^{
+                        [transition complete:NO];
+                    }];
+                    [didFinishBlocks addObject:^{
+                        [transition complete:YES];
+                    }];
+                    [transitionBlocks addObject:^{
+                        dispatch_group_enter(group);
+                        [transition startTransition:duration];
+                    }];
                 }
             }
-            if (!visableFlags[i]) continue;
-            UIViewController *viewController = [newNavigationControllers[i] topViewController];
-            if (!newStatusBarController){
-                if (!viewController.snc_transition.resignStatusBarController) newStatusBarController = viewController;
-            }
-            if (!newRotationController){
-                if (!viewController.snc_transition.resignRotationController) newRotationController = viewController;
-            }
-        }
-        __weak UIViewController *oldStatusBarController = self.statusBarController;
-        __weak UIViewController *oldRotationController = self.rotationController;
-        self.statusBarController = newStatusBarController;
-        self.rotationController = newRotationController;
-        [willCancelBlocks addObject:^{
-            __strong typeof(weakSelf) self=weakSelf;
-            //reverse controller
-            self.statusBarController = oldStatusBarController;
-            self.rotationController = oldRotationController;
-        }];
-    }
-    
-    __block void (^willCancelBlock)(void)=^{
-        for (NSInteger i=willCancelBlocks.count-1;i>=0;i--){
-            willCancelBlocks[i]();
-        }
-    };
-    
-    __block void (^didCancelBlock)(void) = ^{
-        __strong typeof(weakSelf) self=weakSelf;
-        for (NSInteger i=0,count=didCancelBlocks.count;i<count;i++){
-            didCancelBlocks[i]();
-        }
-        //reverse navigation controllers
-        self.navigationControllers = oldNavigationControllers;
-        if (completion) completion(NO);
-    };
-    
-    __block void (^didFinishBlock)(void)=^{
-        for (NSInteger i=didFinishBlocks.count-1;i>=0;i--){
-            didFinishBlocks[i]();
-        }
-        if (completion) completion(YES);
-    };
-    
-    void (^completeBlock)(BOOL finished) = ^(BOOL finished){
-        __strong typeof(weakSelf) self=weakSelf;
-        if (finished && didFinishBlock) didFinishBlock();
-        else if (didCancelBlock) didCancelBlock();
-        didCancelBlock = nil;
-        didFinishBlock = nil;
-        self.interactionWillCancel = nil;
-        self.interactionDidComplete = nil;
-    };
-    
-    self.interactionWillCancel = ^{
-        if (!cancelled) cancelled = YES;
-        willCancelBlock();
-    };
-    self.interactionDidComplete = ^{
-        if (cancelled) completeBlock(!cancelled);
-    };
-    
-    BOOL appeared = self.view.superview?YES:NO;
-    for (NSInteger i = 0, count = newNavigationControllers.count; i < count; i++){
-        __weak UINavigationController *navigationController = newNavigationControllers[i];
-        __weak SNCTransition *transition = navigationController.snc_transition;
-        transition.containerNavigationController = self;
-        transition.viewController                = navigationController;
-        transition.fromViewController            = i>0?newNavigationControllers[i-1]:nil;
-        transition.toViewController              = navigationController;
-        if (visableFlags[i]) {
-            if (!navigationController.parentViewController){
-                if(appeared) [navigationController beginAppearanceTransition:YES animated:animated];
-                [self snc_addChildViewController:navigationController];
-                [self.view addSubview:navigationController.view];
-                if (appeared){
-                    // ensure view`s frame
-                    [navigationController.view layoutIfNeeded];
-                }
-                [transition didMoveToSuperview];
-                if (appeared){
-                    // force layout for calling `viewDidLoad` of `toViewController`
-                    [navigationController.view layoutIfNeeded];
-                }
-                [willCancelBlocks addObject:^{
-                    if(appeared) [navigationController beginAppearanceTransition:NO animated:animated];
-                }];
-                [didCancelBlocks addObject:^{
-                    __strong typeof(weakSelf) self=weakSelf;
-                    [navigationController didMoveToParentViewController:self];
-                    [navigationController willMoveToParentViewController:nil];
-                    [navigationController.view removeFromSuperview];
-                    [navigationController removeFromParentViewController];
-                    if(appeared) [navigationController endAppearanceTransition];
-                }];
-                [didFinishBlocks addObject:^{
-                    __strong typeof(weakSelf) self=weakSelf;
-                    [navigationController didMoveToParentViewController:self];
-                    if(appeared) [navigationController endAppearanceTransition];
-                    navigationController.interactivePopGestureRecognizer.enabled = NO;
-                }];
-            }
-        }else{
-            if (navigationController.parentViewController){
-                if(appeared) [navigationController beginAppearanceTransition:NO animated:animated];
-                [navigationController willMoveToParentViewController:nil];
-                [willCancelBlocks addObject:^{
-                    if(appeared) [navigationController beginAppearanceTransition:YES animated:animated];
-                }];
-                [didCancelBlocks addObject:^{
-                    __strong typeof(weakSelf) self=weakSelf;
-                    if(appeared) [navigationController endAppearanceTransition];
-                    [navigationController removeFromParentViewController];
-                    [self snc_addChildViewController:navigationController];
-                    [navigationController didMoveToParentViewController:self];
-                }];
-                [didFinishBlocks addObject:^{
-                    if(appeared) [navigationController endAppearanceTransition];
-                    [navigationController.view removeFromSuperview];
-                    [navigationController removeFromParentViewController];
-                }];
-            }
-        }
-        if (i>=oldNavigationControllers.count){
-            transition.interactionCancelledBlock = ^BOOL{
-                return cancelled;
-            };
-            transition.completeBlock = ^(BOOL finished) {
-                dispatch_group_leave(group);
-                transition.completeBlock = nil;
-            };
-            [didCancelBlocks addObject:^{
-                [transition complete:NO];
+            [transitionBlocks enumerateObjectsUsingBlock:^(void (^obj)(void), NSUInteger idx, BOOL * stop) {
+                obj();
             }];
-            [didFinishBlocks addObject:^{
-                [transition complete:YES];
-            }];
-            dispatch_group_enter(group);
-            [transitionBlocks addObject:^{
-                [transition startTransition:duration];
-            }];
-        }
-    }
-    [transitionBlocks enumerateObjectsUsingBlock:^(void (^obj)(void), NSUInteger idx, BOOL * stop) {
-        obj();
-    }];
-    if (animated){
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        });
+        if (animated){
             dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completeBlock(!cancelled);
             });
-        });
-    }else{
-        didFinishBlock();
-    }
+        }else{
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                completeBlock(YES);
+            });
+        }
+    });
 }
 
 - (nullable NSArray<UIViewController *> *)_popToIndex:(NSInteger)index duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
-    __weak typeof(self) weakSelf=self;
-    BOOL animated = duration>0;
-    __block BOOL cancelled = NO;
-    self.animationDuration = duration;
-    dispatch_group_t group = dispatch_group_create();
-    NSMutableArray <void(^)(void)> *willCancelBlocks = [NSMutableArray arrayWithCapacity:3];
-    NSMutableArray <void(^)(void)> *didCancelBlocks  = [NSMutableArray arrayWithCapacity:3];
-    NSMutableArray <void(^)(void)> *didFinishBlocks  = [NSMutableArray arrayWithCapacity:3];
-    NSMutableArray <void(^)(void)> *transitionBlocks = [NSMutableArray arrayWithCapacity:3];
-    
+    __weak typeof(self) weakSelf = self;
     NSArray<UINavigationController*> *oldNavigationControllers = ({
         [self.navigationControllers copy];
     });
@@ -511,176 +441,188 @@
         NSRange range = NSMakeRange(index+1, oldNavigationControllers.count-index-1);
         [oldNavigationControllers subarrayWithRange:range];
     });
-    
     self.navigationControllers = [oldNavigationControllers subarrayWithRange:NSMakeRange(0, index+1)];
-
-    BOOL visableFlags[oldNavigationControllers.count];
-    {
-        UIViewController *newStatusBarController = nil;
-        UIViewController *newRotationController  = nil;
-        
-        for (NSInteger i=oldNavigationControllers.count-1;i>=0;i--){
-            visableFlags[i]=NO;
-            if (i==index) visableFlags[i]=YES;
-            else if (i>index) visableFlags[i]=NO;
-            else{
-                UIViewController *nextViewController = self.navigationControllers[i+1];
-                visableFlags[i]=visableFlags[i+1]?nextViewController.snc_transition.transparent:NO;
+    dispatch_async(self.lockQueue, ^{
+        dispatch_group_t group = dispatch_group_create();
+        BOOL animated = duration > 0;
+        __block BOOL cancelled = NO;
+        __block void (^completeBlock)(BOOL finished);
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            __strong typeof (weakSelf) self = weakSelf;
+            self.animationDuration = duration;
+            NSMutableArray <void(^)(void)> *willCancelBlocks = [NSMutableArray arrayWithCapacity:3];
+            NSMutableArray <void(^)(void)> *didCancelBlocks  = [NSMutableArray arrayWithCapacity:3];
+            NSMutableArray <void(^)(void)> *didFinishBlocks  = [NSMutableArray arrayWithCapacity:3];
+            NSMutableArray <void(^)(void)> *transitionBlocks = [NSMutableArray arrayWithCapacity:3];
+            BOOL visableFlags[oldNavigationControllers.count];
+            {
+                UIViewController *newStatusBarController = nil;
+                UIViewController *newRotationController  = nil;
+                
+                for (NSInteger i=oldNavigationControllers.count-1;i>=0;i--){
+                    visableFlags[i]=NO;
+                    if (i==index) visableFlags[i]=YES;
+                    else if (i>index) visableFlags[i]=NO;
+                    else{
+                        UIViewController *nextViewController = self.navigationControllers[i+1];
+                        visableFlags[i]=visableFlags[i+1]?nextViewController.snc_transition.transparent:NO;
+                    }
+                    if (!visableFlags[i]) continue;
+                    UIViewController *viewController = [oldNavigationControllers[i] topViewController];
+                    if (!newStatusBarController){
+                        if (!viewController.snc_transition.resignStatusBarController) newStatusBarController = viewController;
+                    }
+                    if (!newRotationController){
+                        if (!viewController.snc_transition.resignRotationController) newRotationController = viewController;
+                    }
+                }
+                {
+                    __weak UIViewController *oldStatusBarController = self.statusBarController;
+                    __weak UIViewController *oldRotationController  = self.rotationController;
+                    self.statusBarController                        = newStatusBarController;
+                    self.rotationController                         = newRotationController;
+                    [willCancelBlocks addObject:^{
+                        __strong typeof(weakSelf) self=weakSelf;
+                        self.statusBarController = oldStatusBarController;
+                        self.rotationController  = oldRotationController;
+                    }];
+                }
             }
-            if (!visableFlags[i]) continue;
-            UIViewController *viewController = [oldNavigationControllers[i] topViewController];
-            if (!newStatusBarController){
-                if (!viewController.snc_transition.resignStatusBarController) newStatusBarController = viewController;
-            }
-            if (!newRotationController){
-                if (!viewController.snc_transition.resignRotationController) newRotationController = viewController;
-            }
-        }
-        {
-            __weak UIViewController *oldStatusBarController = self.statusBarController;
-            __weak UIViewController *oldRotationController  = self.rotationController;
-            self.statusBarController                        = newStatusBarController;
-            self.rotationController                         = newRotationController;
-            [willCancelBlocks addObject:^{
+            __block void(^willCancelBlock)(void)=^{
+                for (NSInteger i = willCancelBlocks.count-1; i>=0; i--){
+                    willCancelBlocks[i]();
+                }
+            };
+            __block void(^didCancelBlock)(void)=^{
+                __strong typeof(weakSelf) self = weakSelf;
+                self.navigationControllers = oldNavigationControllers;
+                for (NSInteger i = 0,count = didCancelBlocks.count;i<count;i++){
+                    didCancelBlocks[i]();
+                }
+                if (completion) completion(NO);
+            };
+            __block void(^didFinishBlock)(void)=^{
+                for (NSInteger i = didFinishBlocks.count-1; i>=0; i--){
+                    didFinishBlocks[i]();
+                }
+                if (completion) completion(YES);
+            };
+            
+            completeBlock = ^(BOOL finished){
                 __strong typeof(weakSelf) self=weakSelf;
-                self.statusBarController = oldStatusBarController;
-                self.rotationController  = oldRotationController;
-            }];
-        }
-    }
-    __block void(^willCancelBlock)(void)=^{
-        for (NSInteger i = willCancelBlocks.count-1; i>=0; i--){
-            willCancelBlocks[i]();
-        }
-    };
-    __block void(^didCancelBlock)(void)=^{
-        __strong typeof(weakSelf) self = weakSelf;
-        self.navigationControllers = oldNavigationControllers;
-        for (NSInteger i = 0,count = didCancelBlocks.count;i<count;i++){
-            didCancelBlocks[i]();
-        }
-        if (completion) completion(NO);
-    };
-    __block void(^didFinishBlock)(void)=^{
-        for (NSInteger i = didFinishBlocks.count-1; i>=0; i--){
-            didFinishBlocks[i]();
-        }
-        if (completion) completion(YES);
-    };
-    
-    void (^completeBlock)(BOOL finished) = ^(BOOL finished){
-        __strong typeof(weakSelf) self=weakSelf;
-        if (finished && didFinishBlock) didFinishBlock();
-        else if (didCancelBlock) didCancelBlock();
-        didCancelBlock = nil;
-        didFinishBlock = nil;
-        self.interactionWillCancel = nil;
-        self.interactionDidComplete = nil;
-    };
-    
-    self.interactionWillCancel = ^{
-        if (!cancelled) cancelled = YES;
-        willCancelBlock();
-    };
-    self.interactionDidComplete = ^{
-        if (cancelled) completeBlock(!cancelled);
-    };
-    BOOL appeared = self.view.superview?YES:NO;
-    for (NSInteger i=oldNavigationControllers.count-1;i>=0;i--){
-        __weak UINavigationController *navigationController = oldNavigationControllers[i];
-        __weak SNCTransition *transition                    = navigationController.snc_transition;
-        transition.containerNavigationController            = self;
-        transition.viewController                           = navigationController;
-        transition.fromViewController                       = navigationController;
-        transition.toViewController                         = i>0?oldNavigationControllers[i-1]:nil;
-        if (visableFlags[i]) {
-            if (!navigationController.parentViewController){
-                [self snc_addChildViewController:navigationController];
-                if(appeared) [navigationController beginAppearanceTransition:YES animated:animated];
-                [self.view insertSubview:navigationController.view atIndex:0];
-                navigationController.view.frame = self.view.bounds;
-                navigationController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-                navigationController.view.translatesAutoresizingMaskIntoConstraints = YES;
-                // make view controller to call viewDidLoad
-                if (appeared){
-                    [navigationController.view layoutIfNeeded];
-                }
-                [transition didMoveToSuperview];
-                if (appeared){
-                    [navigationController.view layoutIfNeeded];
-                }
-                [willCancelBlocks addObject:^{
-                    if(appeared) [navigationController beginAppearanceTransition:NO animated:animated];
-                }];
-                [didCancelBlocks addObject:^{
-                    __strong typeof(weakSelf) self=weakSelf;
-                    [navigationController didMoveToParentViewController:self];
-                    [navigationController willMoveToParentViewController:nil];
-                    [navigationController.view removeFromSuperview];
-                    [navigationController removeFromParentViewController];
-                    if(appeared) [navigationController endAppearanceTransition];
-                }];
-                [didFinishBlocks addObject:^{
-                    __strong typeof(weakSelf) self=weakSelf;
-                    [navigationController didMoveToParentViewController:self];
-                    if(appeared) [navigationController endAppearanceTransition];
-                    navigationController.interactivePopGestureRecognizer.enabled = NO;
-                }];
-            }
-        }else{
-            if (navigationController.parentViewController){
-                [navigationController beginAppearanceTransition:NO animated:animated];
-                [navigationController willMoveToParentViewController:nil];
-                [willCancelBlocks addObject:^{
-                    if(appeared) [navigationController beginAppearanceTransition:YES animated:animated];
-                }];
-                [didCancelBlocks addObject:^{
-                    __strong typeof(weakSelf) self=weakSelf;
-                    [navigationController removeFromParentViewController];
-                    [self snc_addChildViewController:navigationController];
-                    [navigationController didMoveToParentViewController:self];
-                    if(appeared) [navigationController endAppearanceTransition];
-                }];
-                [didFinishBlocks addObject:^{
-                    [navigationController.view removeFromSuperview];
-                    [navigationController removeFromParentViewController];
-                    if(appeared) [navigationController endAppearanceTransition];
-                }];
-            }
-        }
-        if (i>index){
-            transition.interactionCancelledBlock = ^BOOL{
-                return cancelled;
+                if (finished && didFinishBlock) didFinishBlock();
+                else if (didCancelBlock) didCancelBlock();
+                didCancelBlock = nil;
+                didFinishBlock = nil;
+                self.interactionWillCancel = nil;
+                self.interactionDidComplete = nil;
             };
-            transition.completeBlock = ^(BOOL finished) {
-                dispatch_group_leave(group);
-                transition.completeBlock = nil;
+            
+            self.interactionWillCancel = ^{
+                if (!cancelled) cancelled = YES;
+                willCancelBlock();
             };
-            [didCancelBlocks addObject:^{
-                [transition complete:NO];
+            self.interactionDidComplete = ^{
+                if (cancelled) completeBlock(!cancelled);
+            };
+            BOOL appeared = self.view.superview?YES:NO;
+            for (NSInteger i=oldNavigationControllers.count-1;i>=0;i--){
+                __weak UINavigationController *navigationController = oldNavigationControllers[i];
+                __weak SNCTransition *transition                    = navigationController.snc_transition;
+                transition.containerNavigationController            = self;
+                transition.viewController                           = navigationController;
+                transition.fromViewController                       = navigationController;
+                transition.toViewController                         = i>0?oldNavigationControllers[i-1]:nil;
+                if (visableFlags[i]) {
+                    if (!navigationController.parentViewController){
+                        [self snc_addChildViewController:navigationController];
+                        if(appeared) [navigationController beginAppearanceTransition:YES animated:animated];
+                        [self.view insertSubview:navigationController.view atIndex:0];
+                        navigationController.view.frame = self.view.bounds;
+                        navigationController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+                        navigationController.view.translatesAutoresizingMaskIntoConstraints = YES;
+                        // make view controller to call viewDidLoad
+        //                if (appeared){
+        //                    [navigationController.view layoutIfNeeded];
+        //                }
+                        [transition didMoveToSuperview];
+        //                if (appeared){
+        //                    [navigationController.view layoutIfNeeded];
+        //                }
+                        [willCancelBlocks addObject:^{
+                            if(appeared) [navigationController beginAppearanceTransition:NO animated:animated];
+                        }];
+                        [didCancelBlocks addObject:^{
+                            __strong typeof(weakSelf) self=weakSelf;
+                            [navigationController didMoveToParentViewController:self];
+                            [navigationController willMoveToParentViewController:nil];
+                            [navigationController.view removeFromSuperview];
+                            [navigationController removeFromParentViewController];
+                            if(appeared) [navigationController endAppearanceTransition];
+                        }];
+                        [didFinishBlocks addObject:^{
+                            __strong typeof(weakSelf) self=weakSelf;
+                            [navigationController didMoveToParentViewController:self];
+                            if(appeared) [navigationController endAppearanceTransition];
+                            navigationController.interactivePopGestureRecognizer.enabled = NO;
+                        }];
+                    }
+                }else{
+                    if (navigationController.parentViewController){
+                        [navigationController beginAppearanceTransition:NO animated:animated];
+                        [navigationController willMoveToParentViewController:nil];
+                        [willCancelBlocks addObject:^{
+                            if(appeared) [navigationController beginAppearanceTransition:YES animated:animated];
+                        }];
+                        [didCancelBlocks addObject:^{
+                            __strong typeof(weakSelf) self=weakSelf;
+                            [navigationController removeFromParentViewController];
+                            [self snc_addChildViewController:navigationController];
+                            [navigationController didMoveToParentViewController:self];
+                            if(appeared) [navigationController endAppearanceTransition];
+                        }];
+                        [didFinishBlocks addObject:^{
+                            [navigationController.view removeFromSuperview];
+                            [navigationController removeFromParentViewController];
+                            if(appeared) [navigationController endAppearanceTransition];
+                        }];
+                    }
+                }
+                if (i>index){
+                    transition.interactionCancelledBlock = ^BOOL{
+                        return cancelled;
+                    };
+                    transition.completeBlock = ^(BOOL finished) {
+                        dispatch_group_leave(group);
+                        transition.completeBlock = nil;
+                    };
+                    [didCancelBlocks addObject:^{
+                        [transition complete:NO];
+                    }];
+                    [didFinishBlocks addObject:^{
+                        [transition complete:YES];
+                    }];
+                    [transitionBlocks addObject:^{
+                        dispatch_group_enter(group);
+                        [transition startTransition:duration];
+                    }];
+                }
+            }
+            [transitionBlocks enumerateObjectsUsingBlock:^(void (^obj)(void), NSUInteger idx, BOOL * stop) {
+                obj();
             }];
-            [didFinishBlocks addObject:^{
-                [transition complete:YES];
-            }];
-            dispatch_group_enter(group);
-            [transitionBlocks addObject:^{
-                [transition startTransition:duration];
-            }];
-        }
-    }
-    [transitionBlocks enumerateObjectsUsingBlock:^(void (^obj)(void), NSUInteger idx, BOOL * stop) {
-        obj();
-    }];
-    if (animated){
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        });
+        if (animated){
             dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completeBlock(!cancelled);
             });
-        });
-    }else{
-        didFinishBlock();
-    }
+        }else{
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                completeBlock(YES);
+            });
+        }
+    });
     return ({
         NSMutableArray *v = [NSMutableArray array];
         [popedNavigationControllers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -788,6 +730,11 @@
     return v;
 }
 
+- (dispatch_queue_t)lockQueue{
+    if (_lockQueue) return _lockQueue;
+    _lockQueue = dispatch_queue_create("com.neutronstarer.stackernavigationcontroller", NULL);
+    return _lockQueue;
+}
 
 - (UIGestureRecognizer*)interactivePopGestureRecognizer{
     if (_interactivePopGestureRecognizer) return _interactivePopGestureRecognizer;
@@ -835,6 +782,7 @@
 }
 #pragma mark --
 #pragma mark -- override
+
 
 - (BOOL)shouldAutomaticallyForwardAppearanceMethods{
     return NO;
