@@ -20,6 +20,7 @@
 @property (nonatomic, weak  ) UIViewController    *statusBarController;
 @property (nonatomic, weak  ) UIViewController    *rotationController;
 //percent driven interactive transition
+@property (nonatomic, assign) NSTimeInterval      beginTime;
 @property (nonatomic, assign) NSTimeInterval      animationDuration;
 @property (nonatomic, assign) NSTimeInterval      animationPausedTimeOffset;
 @property (nonatomic, assign) CGFloat             animationCompletionSpeed;
@@ -29,7 +30,10 @@
 @property (nonatomic, strong) UIGestureRecognizer *interactivePopGestureRecognizer;
 @property (nonatomic, assign) CGPoint             gestureRecognizerStartPoint;
 
-@property (nonatomic, strong) dispatch_queue_t    lockQueue;
+@property (nonatomic, strong) dispatch_queue_t    queue;
+
+@property (nonatomic, strong) NSArray             *viewWillAppearAppearances;
+@property (nonatomic, strong) NSArray             *viewWillDisappearAppearances;
 
 @property (nonatomic, copy  ) void(^interactionWillCancel)(void);
 @property (nonatomic, copy  ) void(^interactionDidComplete)(void);
@@ -246,7 +250,7 @@
             v;
         });
     }
-    dispatch_async(self.lockQueue, ^{
+    dispatch_async(self.queue, ^{
         dispatch_group_t group = dispatch_group_create();
         BOOL animated = duration>0;
         __block BOOL cancelled = NO;
@@ -312,7 +316,7 @@
                 self.navigationControllers = oldNavigationControllers;
                 if (completion) completion(NO);
             };
-            __block void (^didFinishBlock)(void)=^{
+            __block void(^didFinishBlock)(void) = ^{
                 for (NSInteger i=didFinishBlocks.count-1;i>=0;i--){
                     didFinishBlocks[i]();
                 }
@@ -347,15 +351,7 @@
                         if(appeared) [navigationController beginAppearanceTransition:YES animated:animated];
                         [self snc_addChildViewController:navigationController];
                         [self.view addSubview:navigationController.view];
-        //                if (appeared){
-        //                    // ensure view`s frame
-        //                    [navigationController.view layoutIfNeeded];
-        //                }
                         [transition didMoveToSuperview];
-                        if (appeared){
-                            // force layout for calling `viewDidLoad` of `toViewController`
-        //                    [navigationController.view layoutIfNeeded];
-                        }
                         [willCancelBlocks addObject:^{
                             if(appeared) [navigationController beginAppearanceTransition:NO animated:animated];
                         }];
@@ -442,7 +438,7 @@
         [oldNavigationControllers subarrayWithRange:range];
     });
     self.navigationControllers = [oldNavigationControllers subarrayWithRange:NSMakeRange(0, index+1)];
-    dispatch_async(self.lockQueue, ^{
+    dispatch_async(self.queue, ^{
         dispatch_group_t group = dispatch_group_create();
         BOOL animated = duration > 0;
         __block BOOL cancelled = NO;
@@ -501,13 +497,12 @@
                 }
                 if (completion) completion(NO);
             };
-            __block void(^didFinishBlock)(void)=^{
+            __block void(^didFinishBlock)(void) = ^{
                 for (NSInteger i = didFinishBlocks.count-1; i>=0; i--){
                     didFinishBlocks[i]();
                 }
                 if (completion) completion(YES);
             };
-            
             completeBlock = ^(BOOL finished){
                 __strong typeof(weakSelf) self=weakSelf;
                 if (finished && didFinishBlock) didFinishBlock();
@@ -517,7 +512,6 @@
                 self.interactionWillCancel = nil;
                 self.interactionDidComplete = nil;
             };
-            
             self.interactionWillCancel = ^{
                 if (!cancelled) cancelled = YES;
                 willCancelBlock();
@@ -541,14 +535,7 @@
                         navigationController.view.frame = self.view.bounds;
                         navigationController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
                         navigationController.view.translatesAutoresizingMaskIntoConstraints = YES;
-                        // make view controller to call viewDidLoad
-        //                if (appeared){
-        //                    [navigationController.view layoutIfNeeded];
-        //                }
                         [transition didMoveToSuperview];
-        //                if (appeared){
-        //                    [navigationController.view layoutIfNeeded];
-        //                }
                         [willCancelBlocks addObject:^{
                             if(appeared) [navigationController beginAppearanceTransition:NO animated:animated];
                         }];
@@ -635,7 +622,6 @@
 - (void)startInteraction{
     CALayer *layer = self.view.layer;
     layer.speed = 0.0;
-    layer.timeOffset = [layer convertTime:CACurrentMediaTime() fromLayer:nil];
     self.animationPausedTimeOffset = layer.timeOffset;
 }
 
@@ -667,15 +653,11 @@
     [self.displayLink invalidate];
     self.displayLink=nil;
     CALayer *layer = self.view.layer;
-    layer.beginTime = 0;
+    layer.timeOffset = self.animationPausedTimeOffset;
     layer.speed = 1.0;
-    layer.beginTime = CACurrentMediaTime()-self.animationDuration;
-    layer.timeOffset = CACurrentMediaTime();
     if (self.interactionDidComplete){
         self.interactionDidComplete();
     }
-    layer.beginTime=0;
-    layer.timeOffset=0;
 }
 
 - (void)finishingRender{
@@ -730,10 +712,10 @@
     return v;
 }
 
-- (dispatch_queue_t)lockQueue{
-    if (_lockQueue) return _lockQueue;
-    _lockQueue = dispatch_queue_create("com.neutronstarer.stackernavigationcontroller", NULL);
-    return _lockQueue;
+- (dispatch_queue_t)queue{
+    if (_queue) return _queue;
+    _queue = dispatch_queue_create("com.neutronstarer.stackernavigationcontroller", DISPATCH_QUEUE_SERIAL);
+    return _queue;
 }
 
 - (UIGestureRecognizer*)interactivePopGestureRecognizer{
@@ -790,29 +772,39 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    for (UIViewController *viewController in self.childViewControllers){
+    NSMutableArray *array = [NSMutableArray array];
+    for (UIViewController *viewController in self.navigationControllers){
+        if (viewController.view.superview != self.view) return;
+        [array addObject:viewController];
         [viewController beginAppearanceTransition:YES animated:animated];
     }
+    self.viewWillAppearAppearances = array;
 }
 
 - (void)viewDidAppear:(BOOL)animated{
-    for (UIViewController *viewController in self.childViewControllers){
+    for (UIViewController *viewController in self.viewWillAppearAppearances){
         [viewController endAppearanceTransition];
     }
+    self.viewWillAppearAppearances = nil;
     [super viewDidAppear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    for (UIViewController *viewController in self.childViewControllers){
+    NSMutableArray *array = [NSMutableArray array];
+    for (UIViewController *viewController in self.navigationControllers){
+        if (viewController.view.superview != self.view) return;
+        [array addObject:viewController];
         [viewController beginAppearanceTransition:NO animated:animated];
     }
+    self.viewWillDisappearAppearances = array;
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
-    for (UIViewController *viewController in self.childViewControllers){
+    for (UIViewController *viewController in self.viewWillDisappearAppearances){
         [viewController endAppearanceTransition];
     }
+    self.viewWillDisappearAppearances = nil;
     [super viewDidDisappear:animated];
 }
 

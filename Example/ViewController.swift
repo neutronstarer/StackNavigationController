@@ -60,9 +60,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return v
     }()
     
-    lazy var animationLayer = {()->CALayer in
-        let v = CALayer()
-        v.backgroundColor = UIColor.red.cgColor
+    lazy var animationView = {()->UIView in
+        let v = UIView()
+        v.backgroundColor = UIColor.red
+        let animation = CABasicAnimation.init(keyPath: "transform.rotation.z")
+        animation.repeatCount = Float.greatestFiniteMagnitude
+        animation.duration = 1
+        animation.byValue = Double.pi*2
+        animation.isCumulative = true
+        animation.isAdditive = true
+        animation.isRemovedOnCompletion = false
+        v.layer.add(animation, forKey: "transform.rotation.z")
         return v
     }()
     
@@ -96,28 +104,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.white
-        //        self.automaticallyAdjustsScrollViewInsets = false
+        NSLog("\(self.title ?? "") viewDidLoad")
+        view.backgroundColor = UIColor.white
         view.addSubview(tableView)
-        view.layer.addSublayer(animationLayer)
-        animationLayer.frame = CGRect.init(x: 100, y: 100, width: 50, height: 50)
-        let animation = CABasicAnimation.init(keyPath: "transform.rotation.z")
-        animation.repeatCount = 100000
-        animation.duration = 1
-        animation.byValue = Double.pi*2
-        animation.isRemovedOnCompletion = false
-        animationLayer.add(animation, forKey: "transform.rotation.z")
+        view.addSubview(animationView)
         tableView.snp.makeConstraints { (make) in
-            //            if #available(iOS 11.0, *) {
-            //                make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
-            //                make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
-            //                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            //                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-            //                return
-            //            }
             make.edges.equalToSuperview()
         }
-        
+        animationView.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+            make.size.equalTo(50)
+        }
         cellModels.append({()->CellModel in
             let v = CellModel()
             v.title = "pop"
