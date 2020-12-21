@@ -6,11 +6,15 @@
 //  Copyright © 2020 neutronstarer. All rights reserved.
 //
 
+#import <pthread.h>
+
 #import "NSObject+SNCPrivate.h"
 #import "SNCTransition+Private.h"
 #import "StackNavigationController.h"
 #import "UINavigationController+SNCPrivate.h"
 #import "UIViewController+SNCPrivate.h"
+
+static void *queueKey = "queueKey";
 
 @interface StackNavigationController ()
 
@@ -250,12 +254,28 @@
             v;
         });
     }
-    dispatch_async(self.queue, ^{
+    void(^inMain)(void(^block)(void)) = ^(void(^block)(void)){
+        if (pthread_main_np()) {
+            block();
+        } else {
+            dispatch_sync(dispatch_get_main_queue(), block);
+        }
+    };
+    void(^inQueue)(BOOL synchronized, void(^block)(void)) = ^(BOOL synchronized, void(^block)(void)){
+        __strong typeof (weakSelf) self = weakSelf;
+        if (dispatch_get_specific(queueKey)){
+            block();
+        }else{
+            if (synchronized) dispatch_sync(self.queue, block);
+            else dispatch_async(self.queue, block);
+        }
+    };
+    inQueue(oldNavigationControllers.count == 0, ^{
         dispatch_group_t group = dispatch_group_create();
         BOOL animated = duration>0;
         __block BOOL cancelled = NO;
         __block void (^completeBlock)(BOOL finished);
-        dispatch_sync(dispatch_get_main_queue(), ^{
+        inMain(^{
             __strong typeof (weakSelf) self = weakSelf;
             self.animationDuration = duration;
             NSMutableArray <void(^)(void)> *willCancelBlocks = [NSMutableArray arrayWithCapacity:3];
@@ -416,12 +436,15 @@
             }];
         });
         if (animated){
-            dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                completeBlock(!cancelled);
+            inQueue(YES, ^{
+                dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+                inMain(^{
+                    completeBlock(!cancelled);
+                });
             });
+    
         }else{
-            dispatch_sync(dispatch_get_main_queue(), ^{
+            inMain(^{
                 completeBlock(YES);
             });
         }
@@ -715,6 +738,7 @@
 - (dispatch_queue_t)queue{
     if (_queue) return _queue;
     _queue = dispatch_queue_create("com.neutronstarer.stackernavigationcontroller", DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_set_specific(_queue, queueKey,  &queueKey, NULL);
     return _queue;
 }
 
