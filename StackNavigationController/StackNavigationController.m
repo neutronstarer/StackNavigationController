@@ -460,7 +460,9 @@ static void *queueKey = "queueKey";
         NSRange range = NSMakeRange(index+1, oldNavigationControllers.count-index-1);
         [oldNavigationControllers subarrayWithRange:range];
     });
-    self.navigationControllers = [oldNavigationControllers subarrayWithRange:NSMakeRange(0, index+1)];
+    NSArray *expectedNavigationControllers = [oldNavigationControllers subarrayWithRange:NSMakeRange(0, index+1)];
+    
+    self.navigationControllers = expectedNavigationControllers;
     dispatch_async(self.queue, ^{
         dispatch_group_t group = dispatch_group_create();
         BOOL animated = duration > 0;
@@ -483,7 +485,7 @@ static void *queueKey = "queueKey";
                     if (i==index) visableFlags[i]=YES;
                     else if (i>index) visableFlags[i]=NO;
                     else{
-                        UIViewController *nextViewController = self.navigationControllers[i+1];
+                        UIViewController *nextViewController = expectedNavigationControllers[i+1];
                         visableFlags[i]=visableFlags[i+1]?nextViewController.snc_transition.transparent:NO;
                     }
                     if (!visableFlags[i]) continue;
@@ -663,12 +665,12 @@ static void *queueKey = "queueKey";
 
 - (void)cancelInteraction:(CGFloat)speed{
     if (self.displayLink) return;
-    if (!self.interactionWillCancel)return;
-    self.interactionWillCancel();
-    self.interactionWillCancel=nil;
     self.animationCompletionSpeed=speed;
     self.displayLink=[CADisplayLink displayLinkWithTarget:self selector:@selector(cancellingRender)];
     [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+    if (!self.interactionWillCancel)return;
+    self.interactionWillCancel();
+    self.interactionWillCancel=nil;
 }
 
 - (void)recoverLayer{
