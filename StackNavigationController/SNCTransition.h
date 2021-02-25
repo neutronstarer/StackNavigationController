@@ -37,11 +37,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// Expected transtion duration, transition will take `expectedTransitionDuration` to animate if user not define
 @property (nonatomic, assign                  ) NSTimeInterval            expectedTransitionDuration;
 
+
 #pragma --
 #pragma -- transition context
 
 /// Animation duration
-@property (nonatomic, assign, readonly        ) NSTimeInterval                     animationDuration;
+@property (nonatomic, assign, readonly        ) NSTimeInterval            animationDuration;
 
 /// Current associated view controller
 /// Relationship is one-to-one,  a transition <---->a view controller

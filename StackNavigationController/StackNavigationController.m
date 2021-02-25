@@ -14,7 +14,15 @@
 #import "UINavigationController+SNCPrivate.h"
 #import "UIViewController+SNCPrivate.h"
 
-static void *queueKey = "queueKey";
+static inline void inMain(void(^block)(void)){
+    if (pthread_main_np()){
+        block();
+        return;
+    }
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        block();
+    });
+}
 
 @interface StackNavigationController ()
 
@@ -35,6 +43,7 @@ static void *queueKey = "queueKey";
 @property (nonatomic, assign) CGPoint             gestureRecognizerStartPoint;
 
 @property (nonatomic, strong) dispatch_queue_t    queue;
+@property (nonatomic, strong) dispatch_semaphore_t lock;
 
 @property (nonatomic, strong) NSArray             *viewWillAppearAppearances;
 @property (nonatomic, strong) NSArray             *viewWillDisappearAppearances;
@@ -89,7 +98,6 @@ static void *queueKey = "queueKey";
 //}
 
 - (nullable __kindof UIViewController *)popViewControllerAnimated:(BOOL)animated completion:(void(^_Nullable)(BOOL finished))completion{
-    
     return [self popViewControllerWithDuration:animated?self.viewControllers.lastObject.snc_transition.expectedTransitionDuration:0 completion:completion];
 }
 
@@ -185,9 +193,7 @@ static void *queueKey = "queueKey";
     }];
 }
 
-
 - (nullable __kindof UIViewController *)popViewControllerWithDuration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
-
     if (self.viewControllers.count<2){
         if (completion) completion(NO);
         return nil;
@@ -208,6 +214,10 @@ static void *queueKey = "queueKey";
 }
 
 - (nullable NSArray<__kindof UIViewController *> *)popToViewController:(UIViewController *)viewController duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
+    if (!self.viewControllers){
+        if (completion) completion(NO);
+        return nil;
+    }
     NSInteger index=[self.viewControllers indexOfObject:viewController];
     if (index==NSNotFound){
         if (completion) completion(NO);
@@ -254,23 +264,9 @@ static void *queueKey = "queueKey";
             v;
         });
     }
-    void(^inMain)(void(^block)(void)) = ^(void(^block)(void)){
-        if (pthread_main_np()) {
-            block();
-        } else {
-            dispatch_sync(dispatch_get_main_queue(), block);
-        }
-    };
-    void(^inQueue)(BOOL synchronized, void(^block)(void)) = ^(BOOL synchronized, void(^block)(void)){
+    void(^block)(void) = ^{
         __strong typeof (weakSelf) self = weakSelf;
-        if (dispatch_get_specific(queueKey)){
-            block();
-        }else{
-            if (synchronized) dispatch_sync(self.queue, block);
-            else dispatch_async(self.queue, block);
-        }
-    };
-    inQueue(oldNavigationControllers.count == 0, ^{
+        dispatch_semaphore_wait(self.lock, DISPATCH_TIME_FOREVER);
         dispatch_group_t group = dispatch_group_create();
         BOOL animated = duration>0;
         __block BOOL cancelled = NO;
@@ -436,19 +432,24 @@ static void *queueKey = "queueKey";
             }];
         });
         if (animated){
-            inQueue(YES, ^{
-                dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-                inMain(^{
-                    completeBlock(!cancelled);
-                });
+            dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+                completeBlock(!cancelled);
+                __strong typeof (weakSelf) self = weakSelf;
+                dispatch_semaphore_signal(self.lock);
             });
-    
-        }else{
-            inMain(^{
-                completeBlock(YES);
-            });
+            return;
         }
-    });
+        inMain(^{
+            completeBlock(YES);
+            __strong typeof (weakSelf) self = weakSelf;
+            dispatch_semaphore_signal(self.lock);
+        });
+    };
+    if (self.interacting||oldNavigationControllers.count==0){
+        dispatch_sync(self.queue, block);
+        return;
+    }
+    dispatch_async(self.queue, block);
 }
 
 - (nullable NSArray<UIViewController *> *)_popToIndex:(NSInteger)index duration:(NSTimeInterval)duration completion:(void(^_Nullable)(BOOL finished))completion{
@@ -461,14 +462,15 @@ static void *queueKey = "queueKey";
         [oldNavigationControllers subarrayWithRange:range];
     });
     NSArray *expectedNavigationControllers = [oldNavigationControllers subarrayWithRange:NSMakeRange(0, index+1)];
-    
     self.navigationControllers = expectedNavigationControllers;
-    dispatch_async(self.queue, ^{
+    void(^block)(void) = ^{
+        __strong typeof (weakSelf) self = weakSelf;
+        dispatch_semaphore_wait(self.lock, DISPATCH_TIME_FOREVER);
         dispatch_group_t group = dispatch_group_create();
         BOOL animated = duration > 0;
         __block BOOL cancelled = NO;
         __block void (^completeBlock)(BOOL finished);
-        dispatch_sync(dispatch_get_main_queue(), ^{
+        inMain(^{
             __strong typeof (weakSelf) self = weakSelf;
             self.animationDuration = duration;
             NSMutableArray <void(^)(void)> *willCancelBlocks = [NSMutableArray arrayWithCapacity:3];
@@ -625,16 +627,24 @@ static void *queueKey = "queueKey";
             }];
         });
         if (animated){
-            dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-            dispatch_sync(dispatch_get_main_queue(), ^{
+            dispatch_group_notify(group, dispatch_get_main_queue(), ^{
                 completeBlock(!cancelled);
+                __strong typeof (weakSelf) self = weakSelf;
+                dispatch_semaphore_signal(self.lock);
             });
-        }else{
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                completeBlock(YES);
-            });
+            return;
         }
-    });
+        inMain(^{
+            completeBlock(YES);
+            __strong typeof (weakSelf) self = weakSelf;
+            dispatch_semaphore_signal(self.lock);
+        });
+    };
+    if (self.interacting){
+        dispatch_sync(self.queue, block);
+    }else{
+        dispatch_async(self.queue, block);
+    }
     return ({
         NSMutableArray *v = [NSMutableArray array];
         [popedNavigationControllers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -668,9 +678,9 @@ static void *queueKey = "queueKey";
     self.animationCompletionSpeed=speed;
     self.displayLink=[CADisplayLink displayLinkWithTarget:self selector:@selector(cancellingRender)];
     [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-    if (!self.interactionWillCancel)return;
-    self.interactionWillCancel();
-    self.interactionWillCancel=nil;
+    if (self.interactionWillCancel){
+        self.interactionWillCancel();
+    }
 }
 
 - (void)recoverLayer{
@@ -740,8 +750,14 @@ static void *queueKey = "queueKey";
 - (dispatch_queue_t)queue{
     if (_queue) return _queue;
     _queue = dispatch_queue_create("com.neutronstarer.stackernavigationcontroller", DISPATCH_QUEUE_SERIAL);
-    dispatch_queue_set_specific(_queue, queueKey,  &queueKey, NULL);
     return _queue;
+}
+
+
+- (dispatch_semaphore_t)lock{
+    if (_lock) return _lock;
+    _lock = dispatch_semaphore_create(1);
+    return _lock;
 }
 
 - (UIGestureRecognizer*)interactivePopGestureRecognizer{
@@ -760,10 +776,14 @@ static void *queueKey = "queueKey";
     CGPoint point=[gestureRecognizer locationInView:superview];
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
-            if (self.navigationControllers.count<2 || self.topViewController.snc_transition.interactivePopGestureRecognizerDisabled|| self.interacting || ![self popViewControllerAnimated:YES]){
+            if (self.navigationControllers.count<2 || self.topViewController.snc_transition.interactivePopGestureRecognizerDisabled|| self.interacting){
                 break;
             }
             self.interacting = YES;
+            if (![self popViewControllerAnimated:YES]){
+                self.interacting = NO;
+                break;
+            }
             self.gestureRecognizerStartPoint = point;
             [self startInteraction];
             break;
